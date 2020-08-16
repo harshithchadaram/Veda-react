@@ -1,0 +1,24 @@
+.header-app {
+  background-color: white !important;
+  box-shadow: none;
+  height: 80px;
+
+}
+.nav-link {
+  color: black !important;
+  font-weight: 600;
+  font-family: 'BhookyFont';
+  font-size: 15px;
+}
+.nav-link:hover{
+  color:#ec9c75 !important
+}
+.nav-link:active{
+  color:#ec9c75 !important
+}
+a{
+  color: inherit !important;
+}
+a:hover{
+  text-decoration: none;
+}

@@ -1,0 +1,76 @@
+// Override default variables before the import
+$body-bg: #000;
+// Import Bootstrap and its default variables
+@import "~bootstrap/scss/bootstrap.scss";
+* {
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+*:focus {
+  outline: 0;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+html,body,
+#root{
+  background: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  outline: none !important;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+}
+body,
+input,
+button {
+  font: 14px "Roboto", sans-serif;
+}
+a {
+  text-decoration: none;
+}
+ul {
+  list-style: none;
+}
+button {
+  cursor: pointer;
+}
+
+.MuiContainer-maxWidthLg{
+  max-width: none !important;
+}
+.MuiSnackbar-root{
+  background: #02b3a3;
+  border-radius: 30px;
+  .MuiAlert-root {
+    border-radius: 30px;
+  }
+  .MuiAlert-message{
+    color: white !important;
+  }
+  .MuiAlert-action{
+  color: white !important;
+  }
+}
+
+
+@font-face {
+  font-family: 'BhookyFont';
+  src: local('BhookyFont'), url(../fonts/Montserrat-Regular.ttf) format('truetype');
+}
