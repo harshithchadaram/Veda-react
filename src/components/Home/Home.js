@@ -6,6 +6,12 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 
 function Home() {
+  const getLocation = () => {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      console.log("Latitude is :", position.coords.latitude);
+      console.log("Longitude is :", position.coords.longitude);
+    });
+  }
   return (
     <div className='d-flex flex-column w-100 '>
       <div>
@@ -17,11 +23,13 @@ function Home() {
           <form class="search-container">
 
             <input type="text" id="search-bar" placeholder="Enter your location" />
-            <IconButton
-              component="span"
-            >
-              <LocationSearchingIcon />
-            </IconButton>
+            <div onClick={getLocation}>
+              <IconButton
+                component="span"
+              >
+                <LocationSearchingIcon />
+              </IconButton>
+            </div>
           </form>
         </div>
         <div className="d-flex flex-row-reverse bg-img-1 align-items-center mx-5 mt-4">
