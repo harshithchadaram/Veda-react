@@ -1,14 +1,19 @@
 .bg-img-home{
     background: url('../../assets/main-home.jpg') no-repeat center;
-    flex:3
+    flex:3;
+    height: 550px;
 }
 .bg-img-1{
     background: url('../../assets/home-page-one.png') no-repeat center;
-    flex:3
+    flex:3;
+    background-position-x: 5%;
+    height: 300px;
 }
 .bg-img-2{
     background: url('../../assets/home-page-two.png') no-repeat center;
-    flex:3
+    flex:3;
+    background-position-x: 95%;
+    height: 300px;
 }
 input#search-bar{
     margin: 0 auto;
