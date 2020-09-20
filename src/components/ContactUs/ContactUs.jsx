@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import AppContext from '../../common/components/AuthContext';
+import AppContext from '../../common/components/store/AuthContext';
 import { useForm } from '../../common/components/Form/useForm';
 import Typography from '@material-ui/core/Typography';
 import Controls from "../../common/components/Form/controls/Controls";
@@ -69,7 +69,7 @@ export default function ContactUs(props) {
     <AppContext.Consumer >
       {() => (
         <Container component="main" maxWidth="xl" className='bg-image p-0'>
-          <Grid container spacing={1} className='grid-overlay'>
+          <Grid container className='grid-overlay'>
             <Grid item sm className='ml-4'>
               <div className='contact-form'>
                 <Typography component="h4" className='align-self-start' variant="h4">

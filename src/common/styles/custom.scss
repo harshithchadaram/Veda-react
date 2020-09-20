@@ -2,6 +2,8 @@
 $body-bg: #000;
 // Import Bootstrap and its default variables
 @import "~bootstrap/scss/bootstrap.scss";
+@import "~slick-carousel/slick/slick.css"; 
+@import "~slick-carousel/slick/slick-theme.css";
 * {
   margin: 0;
   padding: 0;
@@ -23,28 +25,38 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
-html,body,
+input{
+  font-family: 'BhookyFont-Medium' !important;
+}
+html{
+  height:100%;
+}
+body{ min-height:100%; padding:0; margin:0; position:relative;background: white; }
+
+
 #root{
-  background: white;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  
 }
 
 button {
   outline: none !important;
 }
 body {
-  -webkit-font-smoothing: antialiased;
+ 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	margin: auto;
+  display: flex;
+  flex-flow: column nowrap;
 }
 body,
 input,
-button {
-  font: 14px "Roboto", sans-serif;
+button,h1,h2,h3,h4,h5,h6 {
+  font-family: "BhookyFont-Medium" !important;
 }
-a {
-  text-decoration: none;
+span{
+  font-family: "BhookyFont-Regular" !important;
 }
+
 ul {
   list-style: none;
 }
@@ -68,9 +80,52 @@ button {
   color: white !important;
   }
 }
-
-
+.bhooky-thin{
+  font-family: 'BhookyFont-Thin' !important;
+}
+.bhooky-light{
+  font-family: 'BhookyFont-Light' !important;
+}
+.bhooky-regular{
+  font-family: 'BhookyFont-Regular' !important;
+}
+.bhooky-semibold{
+  font-family: 'BhookyFont-Semibold' !important;
+}
+.bhooky-medium{
+  font-family: 'BhookyFont-Medium' !important;
+}
+.bhooky-bold{
+  font-family: 'BhookyFont-Bold' !important;
+}
+.bhooky-extrabold{
+  font-family: 'BhookyFont-ExtraBold' !important;
+}
 @font-face {
-  font-family: 'BhookyFont';
-  src: local('BhookyFont'), url(../fonts/Montserrat-Regular.ttf) format('truetype');
+  font-family: 'BhookyFont-Regular';
+  src: local('BhookyFont-Regular'), url(../fonts/Montserrat-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'BhookyFont-Bold';
+  src: local('BhookyFont-Bold'), url(../fonts/Montserrat-Bold.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'BhookyFont-ExtraBold';
+  src: local('BhookyFont-ExtraBold'), url(../fonts/Montserrat-ExtraBold.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'BhookyFont-Medium';
+  src: local('BhookyFont-Medium'), url(../fonts/Montserrat-Medium.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'BhookyFont-Semibold';
+  src: local('BhookyFont-Semibold'), url(../fonts/Montserrat-SemiBold.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'BhookyFont-Light';
+  src: local('BhookyFont-Light'), url(../fonts/Montserrat-Light.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'BhookyFont-Thin';
+  src: local('BhookyFont-Thin'), url(../fonts/Montserrat-Thin.ttf) format('truetype');
 }

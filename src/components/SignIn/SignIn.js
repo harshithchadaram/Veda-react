@@ -9,15 +9,17 @@ import Typography from '@material-ui/core/Typography';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from '../../api/axios';
-import AppContext from '../../common/components/AuthContext';
+import AppContext from '../../common/components/store/AuthContext';
 import { useForm } from '../../common/components/Form/useForm';
-
+import GoogleBtn from '../../common/components/GoogleButton';
+import FacebookButton from '../../common/components/FacebookButton';
+import { useGoogleLogin } from 'react-google-login'
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   avatar: {
     margin: theme.spacing(1),
@@ -31,6 +33,10 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
+const responseGoogle = (response) => {
+  console.log(response);
+}
+
 const AuthContext = React.createContext({});
 export const AuthProvider = AuthContext.Provider;
 export default function SignIn(props) {
@@ -38,9 +44,20 @@ export default function SignIn(props) {
     email: "",
     password: ""
   };
+
+  const { globalState, globalDispatch } = useContext(AppContext);
+  // const { isSignedIn } = useGoogleLogin();
+  // console.log(isSignedIn);
   const classes = useStyles();
   const appContext = useContext(AppContext);
+  const onSuccessfulGoogleLogin = (response) => {
 
+    console.log(response);
+    window.localStorage.setItem('accessToken', response.accessToken);
+    window.localStorage.setItem('profileObj', JSON.stringify(response.profileObj));
+    globalDispatch({ type: "LOGIN" })
+    history.push('/restaurants');
+  }
   const {
     values,
     setValues,
@@ -108,12 +125,17 @@ export default function SignIn(props) {
                     Forgot password?
               </Link>
                 </Grid>
-                {/* <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid> */}
+                <Grid item>
+                  <Link href="#" variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </Grid>
               </Grid>
+              <div className='d-flex mt-4 justify-content-between'>
+                <GoogleBtn className='w-100' handleLogin={onSuccessfulGoogleLogin} />
+                <FacebookButton />
+              </div>
+
             </form>
           </div>
         </Container>

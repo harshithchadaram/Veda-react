@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) =>
       fontWeight: 600,
       color: 'white',
       fontSize: 50,
-      fontFamily: "'BhookyFont'",
+      fontFamily: "'BhookyFont-Regular'",
       [theme.breakpoints.up("sm")]: {
         display: "block",
       },
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) =>
 function AboutUs() {
   const classes = useStyles();
   return (
-    <div className='d-flex w-100 h-100 bg-image-about-us'>
+    <div className='bg-image-about-us'>
       <div className='d-flex flex-column text-center  aboutus-overlay justify-content-center w-100 h-100 p-5'>
         <Typography className={classes.title} variant="button" noWrap>
           Bhooky

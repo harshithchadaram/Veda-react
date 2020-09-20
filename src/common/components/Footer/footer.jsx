@@ -33,7 +33,9 @@ const useStyles = makeStyles((theme) => ({
     },
     footer: {
         padding: theme.spacing(3, 10),
-        marginTop: 'auto',
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
         backgroundColor: 'black'
     },
 }));
@@ -43,7 +45,7 @@ export default function Footer() {
 
     return (
 
-        <footer className={`${classes.footer} text-center`}>
+        <footer className={`flex-rw text-center`}>
             <div className="d-flex justify-content-between m-auto footer-icons">
                 <FontAwesomeIcon icon={faFacebook} color='white' />
                 <FontAwesomeIcon icon={faInstagram} color='white' />

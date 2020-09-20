@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
-
+import * as _ from 'lodash';
 export function useForm(initialFValues, validateOnChange = false) {
   const [values, setValues] = useState(initialFValues);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -11,6 +11,7 @@ export function useForm(initialFValues, validateOnChange = false) {
       ...values,
       [name]: value,
     });
+
     // if (validateOnChange) validate({ [name]: value });
   };
 

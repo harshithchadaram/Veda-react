@@ -7,18 +7,28 @@
 .nav-link {
   color: black !important;
   font-weight: 600;
-  font-family: 'BhookyFont';
+  font-family: 'BhookyFont-Regular';
   font-size: 15px;
+  margin-right: 15px;
+  a:hover{
+  text-decoration: none;
+}
 }
 .nav-link:hover{
+  color:#813e1d !important
+}
+.nav-link.active{
   color:#ec9c75 !important
 }
-.nav-link:active{
-  color:#ec9c75 !important
-}
+
 a{
   color: inherit !important;
 }
-a:hover{
-  text-decoration: none;
+
+.user-menu .Component-paper-5{
+  box-shadow: rgba(28, 28, 28, 0.15) 0px 2px 8px;
+  border: none !important;
+  ul{
+    padding: unset;
+  }
 }

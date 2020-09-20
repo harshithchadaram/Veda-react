@@ -1,3 +1,11 @@
 .footer-icons{
     width: 100px;
 }
+.flex-rw {
+  display: flex;
+  flex-flow: row wrap;
+    margin-top: auto;
+  width: 100%;
+  background-color: black;
+  height: 70px;
+}

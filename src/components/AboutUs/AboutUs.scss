@@ -1,6 +1,9 @@
 .bg-image-about-us{
     background: url('../../assets/main-home.jpg') no-repeat center;
-    
+        position: absolute;
+    bottom: 0;
+    top: 81px;
+    width: 100%;
 }
 .aboutus-overlay{
     background-color: #0c010187;

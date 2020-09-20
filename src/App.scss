@@ -9,7 +9,6 @@
   z-index: 1201 !important;
 }
 .app{
-  flex-flow: column;
-  height: 100vh;
-  overflow-x: hidden;;
+  flex-direction: column;
 }
+

@@ -5,8 +5,9 @@ import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import axios from './api/axios';
 import "./App.scss";
-import { AppProvider } from "./common/components/AuthContext";
+import { AppProvider } from "./common/components/store/AuthContext";
 import Header from "./common/components/Header/Header";
+import BhookyUserHome from "./components/BhookyUserHome/BhookyUserHome";
 import Home from "./components/Home/Home";
 import BecomeaPartner from "./components/BecomeaPartner/BecomeaPartner";
 import AboutUs from "./components/AboutUs/AboutUs";
@@ -15,6 +16,9 @@ import ContactUs from "./components/ContactUs/ContactUs";
 import SignIn from "./components/SignIn/SignIn";
 import Footer from "./common/components/Footer/footer";
 import { Container } from "@material-ui/core";
+import { PrivateRoute } from "./common/components/auth/PrivateRoute";
+import RestaurantCheckout from "./components/RestaurantCheckOut/RestaurantCheckOut";
+import Profile from "./components/Profile/Profile";
 
 const theme = createMuiTheme({
   palette: {
@@ -22,7 +26,7 @@ const theme = createMuiTheme({
       main: "#000000",
     },
     secondary: {
-      main: "#000000",
+      main: "#5c5c5c",
     },
   },
 });
@@ -50,6 +54,7 @@ class App extends React.Component {
 
   componentWillMount() {
     axios.interceptors.request.use((config) => {
+      debugger;
       this.setState({ showBackdrop: true });
       return config;
     }, (error) => {
@@ -88,30 +93,32 @@ class App extends React.Component {
       this.setState({ snackBarProps: oldSnackBarProps });
     };
     return (
-      <AppProvider value={{ value: this.state, updateValue: updateState }}>
-        <MuiThemeProvider theme={theme}>
-          {/* <div id="app" className="App bg-white h-100"> */}
-          <Header></Header>
-          <Container component='main' className='d-flex app p-0 '>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route path="/about-us" component={AboutUs} />
-              <Route component={BecomeaPartner} path="/become-a-partner" />
-              <Route path="/become-a-promoter" component={FindaRestaurant} />
-              <Route path="/contact-us" component={ContactUs} />
-              <Route path="/sign-in" component={SignIn} />
-            </Switch>
-            <Footer></Footer>
-          </Container>
+      <MuiThemeProvider theme={theme}>
+        {/* <div id="app" className="App bg-white h-100"> */}
 
-          {/* </div> */}
+        <Header></Header>
+        <Container component='main' className='d-flex app p-0 bhooky-content'>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route path="/about-us" component={AboutUs} />
+            <Route component={BecomeaPartner} path="/become-a-partner" />
+            <Route path="/become-a-promoter" component={FindaRestaurant} />
+            <Route path="/contact-us" component={ContactUs} />
+            <PrivateRoute path="/profile" component={Profile} />
+            <Route path="/restaurants" component={BhookyUserHome} />
+            <Route path="/:restaurantName/order" component={RestaurantCheckout} />
+          </Switch>
+        </Container>
 
-          {/* <AppSnackBar severity={severity} message={message} autoHideDuration={autoHideDuration} anchorOrigin={{ vertical, horizontal }} open={open} handleClose={handleClose} /> */}
-          <Backdrop open={this.state.showBackdrop} className='backdrop'>
-            <CircularProgress color="inherit" />
-          </Backdrop>
-        </MuiThemeProvider>
-      </AppProvider>
+        <Footer></Footer>
+
+        {/* </div> */}
+
+        {/* <AppSnackBar severity={severity} message={message} autoHideDuration={autoHideDuration} anchorOrigin={{ vertical, horizontal }} open={open} handleClose={handleClose} /> */}
+        <Backdrop open={this.state.showBackdrop} className='backdrop'>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </MuiThemeProvider>
     );
   }
 }

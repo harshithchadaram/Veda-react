@@ -5,7 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 const instance = axios.create({
     baseURL: 'http://bhookyapi-env.eba-whwnnhzk.ap-south-1.elasticbeanstalk.com/',
-    headers: { 'auth-type': 'merchant', 'Authorization': 'Bearer ' + window.localStorage.accessToken }
+    headers: { 'auth-type': 'user', 'Authorization': 'Bearer ' + window.localStorage.accessToken }
 });
 
 export default instance;

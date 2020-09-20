@@ -4,10 +4,25 @@ import './Home.scss';
 import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-
+import Geocode from "react-geocode";
+import { useHistory } from 'react-router-dom';
+import { BhookyConstants } from '../../common/AppConstants';
 function Home() {
+  const history = useHistory();
   const getLocation = () => {
+    Geocode.setApiKey(BhookyConstants.apiKey);
+    // history.push('/restaurants');
     navigator.geolocation.getCurrentPosition(function (position) {
+      // Get address from latidude & longitude.
+      Geocode.fromLatLng(position.coords.latitude, position.coords.longitude).then(
+        response => {
+          const address = response.results[0].formatted_address;
+          console.log(response);
+        },
+        error => {
+          console.error(error);
+        }
+      );
       console.log("Latitude is :", position.coords.latitude);
       console.log("Longitude is :", position.coords.longitude);
     });
@@ -20,10 +35,10 @@ function Home() {
           <Typography variant="h4" className='text-light mb-3 search-heading' noWrap>
             Pick your favorite food
     </Typography>
-          <form class="search-container">
+          <form className="search-container">
 
             <input type="text" id="search-bar" placeholder="Enter your location" />
-            <div onClick={getLocation}>
+            <div onClick={getLocation} className='d-flex'>
               <IconButton
                 component="span"
               >
