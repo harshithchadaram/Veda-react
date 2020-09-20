@@ -1,0 +1,13 @@
+.item-name{
+    flex: 5;
+    text-transform: capitalize;
+}
+.item-btns{
+    flex: 3;
+}
+.item-price{
+    flex: 2;
+}
+.item-price::before{
+    content: "\20B9";
+}

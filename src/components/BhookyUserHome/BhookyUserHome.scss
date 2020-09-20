@@ -1,0 +1,122 @@
+.restaurant-main{
+      
+        .cards {
+            display: grid;
+            grid-template-columns:repeat(auto-fit, minmax(60px, 1fr));
+            grid-gap: 35px;
+          }
+          
+        .MuiCard-root {
+            grid-column-end: span 4;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: all 0.3s ease 0s;
+          }
+}
+.close-drawer{
+  font-weight: 400 !important;
+    font-size: 35px !important;
+    width: 50px;
+    height: 58px;
+}
+.restaurants-title{
+    font-weight: 600 !important;
+    font-size: 28px !important;
+}
+.filter-title{
+  font-weight: 600 !important;
+  font-size: 15px !important;
+}
+.divider-filters{
+  width: 95%;
+}
+// @media only screen and (max-width: 1200px) {
+//     .restaurant-main{
+//         .MuiCard-root{
+//             grid-column-end: span 3;
+//         }
+//     }
+// }
+// @media only screen and (max-width: 1400px) {
+//     .restaurant-main{
+//         .cards {
+//             grid-column: 6 / span 12;
+//             display: grid;
+//             grid-template-columns:repeat(12, minmax(auto, 200px));
+//             grid-gap: 50px;
+//           }
+//         .MuiCard-root{
+//             grid-column-end: span 4;
+//         }
+//     }
+// }
+// @media only screen and (max-width: 600px) {
+//     .restaurant-main{
+//         .cards {
+//             grid-column: 1 / span 3;
+//             display: grid;
+//             grid-template-columns:repeat(3, minmax(auto, 200px));
+//             grid-gap: 50px;
+//           }
+//         .MuiCard-root{
+//             grid-column-end: span 3;
+//         }
+//     }
+// }
+// @media only screen and (max-width: 1000px) {
+//     .MuiCard-root {
+//       grid-column-end: span 6;
+//     }
+//   }
+  
+//   @media only screen and (max-width: 700px) {
+//     .restaurant-main {
+//       grid-gap: 20px;
+//       .MuiCard-root {
+//         grid-column-end: span 12;
+//       }
+//     }
+   
+//   }
+  
+//   @media only screen and (max-width: 500px) {
+//     .restaurant-main {
+//       grid-template-columns: 10px repeat(6, 1fr) 10px;
+//       grid-gap: 10px;
+//       .MuiCard-root {
+//         grid-column-end: span 6;
+//       }
+//     }
+//     .cards {
+//       grid-column: 2 / span 6;
+//       grid-template-columns: repeat(6, 1fr);
+//       grid-gap: 20px;
+//     }
+   
+//   }
+
+.dialog-addtocart{
+  background: black;
+    width: 100%;
+    bottom: 0px;
+    margin: 0px;
+    position: absolute;
+    padding: 15px;
+    right: 0px;
+    left: 0px;
+    .viewmore .MuiButton-label{
+      color: white;
+      font-family: 'BhookyFont-Bold' !important;
+      }
+   .MuiButton-outlined{
+      background: white;
+    }
+     .MuiButton-outlined:hover{
+      background: white;
+    }
+    .add-or-remove{
+      background: white;
+    }
+  
+}

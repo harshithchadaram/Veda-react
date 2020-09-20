@@ -1,0 +1,78 @@
+.dec-btn{
+    padding-left: 3px !important;
+}
+.inc-btn{
+    padding-right: 3px !important;
+}
+.dec-inc-btn{
+    border: 1px solid black;
+    border-radius: 30px;
+}
+.MuiIconButton-root{
+    padding: 7px !important;
+}
+.item-count{
+    font-size: 15px;
+}
+.summary-subheading{
+    margin-left: 2px;
+}
+.summary-cart{
+    width: auto !important;
+    height: 100%;
+}
+.summary-root{
+    height:calc(100vh - 197px);
+    position: sticky;
+    top: 0;
+}
+.cart-no-items{
+    height: 250px;
+    opacity: 0.2;
+      img{
+          width: 120px;
+          height: 120px;
+      }
+}
+.cart-secondary{
+    min-height: 150px;
+}
+.summarycard-title{
+    .MuiCardHeader-title{
+    font-family: 'BhookyFont-Semibold' !important;
+    }
+}
+.subtotal::before{
+ content: "\20B9";
+}
+.summarycard-subtotal-title{
+    .MuiCardHeader-title{
+    font-family: 'BhookyFont-Medium' !important;
+        font-size: 22px;
+    }
+    .summary-subheading{
+        margin: unset;
+    }
+    .MuiTypography-caption{
+        font-size: 10px;
+    }
+}
+.clear-cart{
+    align-self: flex-end !important;
+    .MuiButton-label{
+    font-size: 10px;
+    }
+}
+.cart-items-root{
+    overflow-x: hidden;
+    overflow-y: auto;
+    .cart-items{
+    overflow: auto;
+        .MuiCardContent-root:last-child{
+            padding-bottom:unset;
+        }
+        .add-or-remove .MuiIconButton-label .MuiSvgIcon-root{
+            font-size: 0.8rem !important;
+        }
+    }
+}
