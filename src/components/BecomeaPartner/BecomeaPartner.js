@@ -78,8 +78,6 @@ function BecomeaPartner() {
         const locationObj = results[0];
         const cityName = _.find(locationObj.address_components, l => _.includes(l.types, "locality"))?.long_name;
         const stateName = _.find(locationObj.address_components, l => _.includes(l.types, "administrative_area_level_1"))?.long_name;
-        debugger;
-
         const merchnatObj = {
           merchantDetails: {
             name: values.name,
@@ -87,7 +85,7 @@ function BecomeaPartner() {
             mobile: values.businessNumber,
             websiteLink: values.website,
             status: "pending",
-            licenceNumber: values.licenceNumber,
+            licenceNumber: values.licenseNumber,
             contactPersonName: values.yourName,
             contactPersonMobile: values.yourNumber,
             location: {
@@ -106,16 +104,17 @@ function BecomeaPartner() {
           }
 
         };
-        // axios
-        //   .post(`/merchant/create`, merchnatObj)
-        //   .then(res => {
-        //     const data = res.data;
-        //     if (data.success) {
-
-        //     }
-        //   })
-        //   .catch((error) => {
-        //   })
+        debugger;
+        axios
+          .post(`/merchant/create`, merchnatObj)
+          .then(res => {
+            const data = res.data;
+            if (data.success) {
+              console.log(data);
+            }
+          })
+          .catch((error) => {
+          })
         console.log(merchnatObj);
       }
       );
@@ -264,12 +263,12 @@ function BecomeaPartner() {
                 required
                 fullWidth
                 id="yourNumber"
-                value={values.mobile}
+                value={values.yourNumber}
                 label="Phone Number"
                 name="yourNumber"
                 autoComplete="mobile"
                 countryCodeEditable={false}
-                onChange={event => handleInputChange({ target: { name: 'mobile', value: event } })}
+                onChange={event => handleInputChange({ target: { name: 'yourNumber', value: event } })}
               />
               <Button
                 type="submit"
