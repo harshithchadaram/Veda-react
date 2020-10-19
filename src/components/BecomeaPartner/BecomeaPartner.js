@@ -12,7 +12,7 @@ import TimelineSeparator from '@material-ui/lab/TimelineSeparator';
 import TimelineConnector from '@material-ui/lab/TimelineConnector';
 import TimelineContent from '@material-ui/lab/TimelineContent';
 import TimelineDot from '@material-ui/lab/TimelineDot';
-import { Container } from '@material-ui/core';
+import { Collapse, Container, IconButton } from '@material-ui/core';
 import axios from '../../api/axios';
 import MuiPhoneNumber from "material-ui-phone-number";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
@@ -20,6 +20,9 @@ import { BhookyConstants } from '../../common/AppConstants';
 import React from 'react';
 import { geocodeByAddress, getLatLng } from 'react-google-places-autocomplete';
 import * as _ from 'lodash';
+import Alert from '@material-ui/lab/Alert';
+import CloseIcon from '@material-ui/icons/Close';
+
 const useStyles = makeStyles((theme) => ({
 
   paper: {
@@ -60,6 +63,8 @@ const customStyles = {
 }
 function BecomeaPartner() {
   const [address, setAddress] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [alertInfo, setAlertInfo] = React.useState({});
   const initialFValues = {
     name: "",
     email: "",
@@ -104,17 +109,34 @@ function BecomeaPartner() {
           }
 
         };
-        debugger;
+        window.scrollTo({ behavior: 'smooth', top: 0 });
         axios
           .post(`/merchant/create`, merchnatObj)
           .then(res => {
             const data = res.data;
+            window.scrollTo({ behavior: 'smooth', top: 0 });
             if (data.success) {
               console.log(data);
+              setOpen(true);
+              setAlertInfo({ severity: "success", msg: data.message })
+              resetForm();
+              setAddress(null);
+            } else {
+              setOpen(true);
+              setAlertInfo({ severity: "error", msg: "Something went wrong" })
             }
+            setTimeout(() => {
+              setOpen(false)
+            }, 2000)
           })
           .catch((error) => {
+            setOpen(true);
+            setAlertInfo({ severity: "error", msg: "Something went wrong" });
+            setTimeout(() => {
+              setOpen(false)
+            }, 2000)
           })
+
         console.log(merchnatObj);
       }
       );
@@ -133,16 +155,24 @@ function BecomeaPartner() {
   const {
     values,
     setValues,
+    resetForm,
     handleInputChange,
   } = useForm(initialFValues, true);
   return (
-    <Container component="main" maxWidth="xl" className='bg-image p-0'>
-      <Grid container className='grid-overlay'>
-        <Grid item sm className='ml-4'>
+    <Container maxWidth="xl" className=' p-0'>
+      <Grid container className='grid-overlay bg-image'>
+        <Grid item sm className='m-3'>
           <div className='contact-form'>
             <Typography component="h4" className='align-self-start' variant="h4">
               Get Started
           </Typography>
+            <Collapse in={open} className='pt-3'>
+              <Alert
+                severity={alertInfo.severity}
+              >
+                {alertInfo.msg}
+              </Alert>
+            </Collapse>
             <form className={classes.form} onSubmit={getStarted} noValidate>
               <Typography component="h6" className='align-self-start' variant="h6">
                 Merchant Information
@@ -276,9 +306,11 @@ function BecomeaPartner() {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
+                disabled={_.values(values).some(v => v === "") || _.isEmpty(address)}
               >
                 Get Started
         </Button>
+
             </form>
           </div>
         </Grid>

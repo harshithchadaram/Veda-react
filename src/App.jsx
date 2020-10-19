@@ -19,6 +19,10 @@ import { Container } from "@material-ui/core";
 import { PrivateRoute } from "./common/components/auth/PrivateRoute";
 import RestaurantCheckout from "./components/RestaurantCheckOut/RestaurantCheckOut";
 import Profile from "./components/Profile/Profile";
+import { Provider } from "react-redux";
+import store from "./common/components/redux/store";
+import PrivacyStatement from "./components/PrivacyStatement/PrivacyStatement";
+import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditions";
 
 const theme = createMuiTheme({
   palette: {
@@ -54,7 +58,7 @@ class App extends React.Component {
 
   componentWillMount() {
     axios.interceptors.request.use((config) => {
-      debugger;
+      // debugger;
       this.setState({ showBackdrop: true });
       return config;
     }, (error) => {
@@ -93,32 +97,36 @@ class App extends React.Component {
       this.setState({ snackBarProps: oldSnackBarProps });
     };
     return (
-      <MuiThemeProvider theme={theme}>
-        {/* <div id="app" className="App bg-white h-100"> */}
+      <Provider store={store}>
+        <MuiThemeProvider theme={theme}>
+          {/* <div id="app" className="App bg-white h-100"> */}
 
-        <Header></Header>
-        <Container component='main' className='d-flex app p-0 bhooky-content'>
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/about-us" component={AboutUs} />
-            <Route component={BecomeaPartner} path="/become-a-partner" />
-            <Route path="/become-a-promoter" component={FindaRestaurant} />
-            <Route path="/contact-us" component={ContactUs} />
-            <PrivateRoute path="/profile" component={Profile} />
-            <Route path="/restaurants" component={BhookyUserHome} />
-            <Route path="/:restaurantName/order" component={RestaurantCheckout} />
-          </Switch>
-        </Container>
+          <Header></Header>
+          <Container component='main' className='d-flex app p-0 bhooky-content'>
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route path="/about-us" component={AboutUs} />
+              <Route component={BecomeaPartner} path="/become-a-partner" />
+              <Route path="/become-a-promoter" component={FindaRestaurant} />
+              <Route path="/contact-us" component={ContactUs} />
+              <PrivateRoute path="/profile" component={Profile} />
+              <Route path="/restaurants" component={BhookyUserHome} />
+              <Route path="/privacy-statement" component={PrivacyStatement} />
+              <Route path="/terms-and-conditions" component={TermsAndConditions} />
+              <Route path="/:restaurantName/:id/order" component={RestaurantCheckout} />
+            </Switch>
+          </Container>
 
-        <Footer></Footer>
+          <Footer></Footer>
 
-        {/* </div> */}
+          {/* </div> */}
 
-        {/* <AppSnackBar severity={severity} message={message} autoHideDuration={autoHideDuration} anchorOrigin={{ vertical, horizontal }} open={open} handleClose={handleClose} /> */}
-        <Backdrop open={this.state.showBackdrop} className='backdrop'>
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </MuiThemeProvider>
+          {/* <AppSnackBar severity={severity} message={message} autoHideDuration={autoHideDuration} anchorOrigin={{ vertical, horizontal }} open={open} handleClose={handleClose} /> */}
+          <Backdrop open={this.state.showBackdrop} className='backdrop'>
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        </MuiThemeProvider>
+      </Provider>
     );
   }
 }

@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './BhookyUserHome.scss';
 import CenterSlider from '../../common/components/Slider/Slider';
 import RestaurantCard from '../../common/components/RestaurantCard/RestaurantCard';
-import { Card, Container, makeStyles, Typography, IconButton, Drawer, List, ListItem, ListItemText, Divider, withStyles, Chip, Button, Grow, Dialog, DialogActions, DialogTitle, DialogContent, DialogContentText } from '@material-ui/core';
+import { Card, Container, makeStyles, Typography, IconButton, Drawer, List, ListItem, ListItemText, Divider, withStyles, Chip, Button, Grow, Dialog, DialogActions, DialogTitle, DialogContent, DialogContentText, CardMedia } from '@material-ui/core';
 import TuneIcon from '@material-ui/icons/Tune';
 import { CloseButton, Figure } from 'react-bootstrap';
 import Slider from '@material-ui/core/Slider';
 import * as _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import AddorRemoveButtons from '../../common/components/AddorRemoveButtons/AddorRemoveButtons';
+import axios from '../../api/axios';
+import store from '../../common/components/redux/store';
+
 const PrettoSlider = withStyles((theme) => ({
   root: {
     color: theme.palette.primary,
@@ -82,11 +85,13 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
-  list: {
-    width: 600,
-  },
   fullList: {
     width: 'auto',
+  },
+  cover: {
+    width: '100%',
+    height: 300,
+    marginBottom: 30
   },
 }));
 
@@ -96,13 +101,59 @@ function BhookyUserHome() {
   const history = useHistory();
 
   const [open, setOpen] = React.useState(false);
+  const [products, setProducts] = React.useState([]);
+  const [product, setProduct] = React.useState({});
+  const [location, setLocation] = React.useState({});
+
+  useEffect(() => {
+    if (store.getState()) {
+      setLocation(store.getState()['userLocation'][0]);
+    }
+    store.subscribe(() => {
+      setLocation(store.getState()['userLocation'][0]);
+    });
+    if (!_.isEmpty(location)) {
+      const productObj = {
+        status: "available",
+        // location: {
+        //   longitude: location.geometry.location.lng, latitude: location.geometry.location.lat, maxDistance: 5000
+        // },
+        location: {
+          longitude: -117.781256,
+          latitude: 33.65618,
+          maxDistance: 5000
+        },
+        type: 'user'
+      }
+
+      axios
+        .post('product/data', productObj)
+        .then(res => {
+          const data = res.data;
+          if (data.success) {
+            setProducts(data.products);
+            console.log(data);
+          }
+        })
+        .catch((error) => {
+        });
+    } else {
+      store.subscribe(() => {
+        setLocation(store.getState()['userLocation'][0]);
+      })
+    }
+  }, [location])
+
+
   const handleClickOnItem = (itemData) => {
     // history.push('/' + _.replace("Pizza Hut".toLowerCase(), ' ', '-') + '/order')
-
+    setProduct(itemData);
     setOpen(true);
   }
 
   const handleClose = () => {
+    debugger;
+    console.log('closed');
     setOpen(false);
   };
 
@@ -131,32 +182,34 @@ function BhookyUserHome() {
   };
   return (
     <React.Fragment>
-      <CenterSlider />
-      <div className='d-flex justify-content-between mx-5'>
-        <Typography variant="h5" className='restaurants-title' >
-          All items nearby
+      {/* <CenterSlider /> */}
+      <Container component='section' style={{ height: '100vh' }}>
+        <div className='d-flex justify-content-between mx-3 my-4'>
+          <Typography variant="h5" className='restaurants-title' >
+            All items nearby
         </Typography>
 
-        <Typography variant="body2" >
-          Filters
+          <Typography variant="body2" >
+            Filters
           <div onClick={toggleDrawer('openDrawer', true)} className='d-inline'>
-            <IconButton
-              component="span"
-            >
-              <TuneIcon />
-            </IconButton>
-          </div>
-        </Typography>
-      </div>
-      <Container maxWidth="lg" className='px-5 py-4 restaurant-main'>
+              <IconButton
+                component="span"
+              >
+                <TuneIcon />
+              </IconButton>
+            </div>
+          </Typography>
+        </div>
+        <div className='restaurant-main'>
 
-        <section className='cards'>
-          {[...Array(18)].map((x, i) =>
+          <section className='cards'>
+            {products.map((product, i) =>
 
-            <RestaurantCard rName='Pizza Hut' showItemDialog={() => handleClickOnItem(x)} />
+              <RestaurantCard product={product} showItemDialog={() => handleClickOnItem(product)} />
 
-          )}
-        </section>
+            )}
+          </section>
+        </div>
       </Container>
       <Drawer anchor='right' open={state.openDrawer} onClose={toggleDrawer('openDrawer', false)}>
         <div className='d-flex'>
@@ -190,8 +243,8 @@ function BhookyUserHome() {
               onClick={event => onFilterChipClick(chip)}
             />
           )}
-          <Divider className='mx-auto mt-3 divider-filters' />
-          <Typography variant="h6" className='py-3 pl-2 filter-title' >
+          {/* <Divider className='mx-auto mt-3 divider-filters' /> */}
+          {/* <Typography variant="h6" className='py-3 pl-2 filter-title' >
             Diet
         </Typography>
           {state.filterDietChips.map((chip, i) =>
@@ -203,7 +256,7 @@ function BhookyUserHome() {
               clickable
               onClick={event => onFilterDietChipClick(chip)}
             />
-          )}
+          )} */}
           <Divider className='mx-auto mt-3 divider-filters' />
           <Typography variant="h6" className='py-3 pl-2 filter-title' >
             Price
@@ -237,53 +290,46 @@ function BhookyUserHome() {
       <Dialog
         open={open}
         onClose={handleClose}
-        scroll='paper'
+        fullWidth={true}
+        maxWidth={'sm'}
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       >
         <DialogActions className='justify-content-between item-dialog'>
           <DialogTitle id="scroll-dialog-title">
             <Typography variant="h5" className='bhooky-semibold'>
-              Pizza Hut
+              {product?.name}
             </Typography>
           </DialogTitle>
           <CloseButton onClick={handleClose} className='my-4 mr-2'></CloseButton>
         </DialogActions>
-        <DialogContent dividers={true}>
-          <Figure >
-            <Figure.Image
-              src="https://www.myrelationshipwithfood.com/wp-content/uploads/2017/09/mrwf.jpg"
-            />
-          </Figure>
+        <DialogContent
+          dividers={true} style={{ marginBottom: '65px' }}>
+          <CardMedia
+            className={classes.cover}
+            image={product?.image?.length > 0 ? product?.image[0] : "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTI9wAAiM4eBLesNjgpOTn-_27WXIb6kEevJQ&usqp=CAU"}
+          />
           <DialogContentText
             id="scroll-dialog-description"
-            tabIndex={-1}
             className='bhooky-regular'
           >
-            {[...new Array(5)]
-              .map(
-                () => `Cras mattis consectetur purus sit amet fermentum.
-Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`,
-              )
-              .join('\n')}
+            {product?.description}
           </DialogContentText>
           <div className='d-flex dialog-addtocart justify-content-between'>
-            <Button color="primary" className='viewmore' onClick={() => history.push('/' + _.replace("Pizza Hut".toLowerCase(), ' ', '-') + '/order')}>
+            <Button color="primary" className='viewmore' onClick={() => history.push('/' + _.replace(product.merchant.name.toLowerCase(), ' ', '-') + '/' + product.merchant._id + '/order')}>
               More from this merchant
             </Button>
             <div className='d-flex'>
               <AddorRemoveButtons size='extraSmall' className='dialog-add' />
               <Typography variant="body2" component="p" className='text-light bhooky-semibold pl-3 pr-2 text-center my-auto dialog-item-price'>
-                30
-            </Typography>
+                {product?.price}
+              </Typography>
             </div>
           </div>
         </DialogContent>
 
       </Dialog>
-    </React.Fragment>
+    </React.Fragment >
   );
 }
 

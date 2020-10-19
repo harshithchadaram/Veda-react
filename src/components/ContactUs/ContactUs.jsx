@@ -12,6 +12,11 @@ import { useForm } from '../../common/components/Form/useForm';
 import Typography from '@material-ui/core/Typography';
 import Controls from "../../common/components/Form/controls/Controls";
 import './ContactUs.scss';
+import axios from '../../api/axios';
+import { Collapse } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+import MuiPhoneNumber from "material-ui-phone-number";
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(5),
@@ -54,23 +59,62 @@ export default function ContactUs(props) {
   const {
     values,
     setValues,
+    resetForm,
     handleInputChange,
   } = useForm(initialFValues, true);
-  const alertInfo = {
-    success: false,
-    severity: "",
-    message: ""
-  }
+  // const alertInfo = {
+  //   success: false,
+  //   severity: "",
+  //   message: ""
+  // }
+  const [open, setOpen] = React.useState(false);
+  const [alertInfo, setAlertInfo] = React.useState({});
   const history = useHistory();
-  const loginUser = (event) => {
+  const submitQuery = (event) => {
+    event.preventDefault();
+    window.scrollTo({ behavior: 'smooth', top: 0 });
+    const queryObj = {
+      userName: values.firstName + " " + values.lastName,
+      email: values.email,
+      mobile: "9640109420",
+      merchantName: "Abc restaurant",
+      merchantAddress: "Hyderabad",
+      title: "Products query",
+      description: values.query
+    }
 
+    axios
+      .post(`/query/create`, queryObj)
+      .then(res => {
+        const data = res.data;
+        window.scrollTo({ behavior: 'smooth', top: 0 });
+        if (data.success) {
+          console.log(data);
+          setOpen(true);
+          setAlertInfo({ severity: "success", msg: data.message })
+          resetForm();
+        } else {
+          setOpen(true);
+          setAlertInfo({ severity: "error", msg: "Something went wrong" })
+        }
+        setTimeout(() => {
+          setOpen(false)
+        }, 2000)
+      })
+      .catch((error) => {
+        setOpen(true);
+        setAlertInfo({ severity: "error", msg: "Something went wrong" });
+        setTimeout(() => {
+          setOpen(false)
+        }, 2000)
+      })
   }
   return (
     <AppContext.Consumer >
       {() => (
         <Container component="main" maxWidth="xl" className='bg-image p-0'>
           <Grid container className='grid-overlay'>
-            <Grid item sm className='ml-4'>
+            <Grid item sm className='m-3'>
               <div className='contact-form'>
                 <Typography component="h4" className='align-self-start' variant="h4">
                   Contact sales
@@ -78,7 +122,14 @@ export default function ContactUs(props) {
                 <Typography variant="body2" className='align-self-start mt-1 text-secondary' display="block" gutterBottom>
                   Please fill out this form to discuss your needs with our sales team. For technical support, visit the Support Hub.
       </Typography>
-                <form className={classes.form} onSubmit={loginUser} noValidate>
+                <Collapse in={open} className='pt-3'>
+                  <Alert
+                    severity={alertInfo.severity}
+                  >
+                    {alertInfo.msg}
+                  </Alert>
+                </Collapse>
+                <form className={classes.form} onSubmit={submitQuery} noValidate>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -113,7 +164,22 @@ export default function ContactUs(props) {
                     name="businessEmail"
                     onChange={handleInputChange}
                   />
-                  <TextField
+                  <MuiPhoneNumber
+                    defaultCountry='in'
+                    onlyCountries={['in', 'us']}
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="businessNumber"
+                    value={values.businessNumber}
+                    label="Business Phone Number"
+                    name="businessNumber"
+                    autoComplete="mobile"
+                    countryCodeEditable={false}
+                    onChange={event => handleInputChange({ target: { name: 'businessNumber', value: event } })}
+                  />
+                  {/* <TextField
                     variant="outlined"
                     margin="normal"
                     fullWidth
@@ -123,7 +189,7 @@ export default function ContactUs(props) {
                     label="Business Phone Number"
                     name="businessNumber"
                     onChange={handleInputChange}
-                  />
+                  /> */}
                   <Controls.RadioGroup
                     name="type"
 

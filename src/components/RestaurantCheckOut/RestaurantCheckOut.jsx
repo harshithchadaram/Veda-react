@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { Container, CardMedia, Card, makeStyles, CardContent, Typography, Button } from '@material-ui/core';
+import { Container, CardMedia, Card, makeStyles, CardContent, Typography, Button, Snackbar, Slide } from '@material-ui/core';
 import './RestaurantCheckOut.scss';
 import RestaurantCard from '../../common/components/RestaurantCard/RestaurantCard';
-import { useHistory } from 'react-router-dom';
-
+import { useHistory, useLocation } from 'react-router-dom';
+import axios from '../../api/axios';
 import GradeIcon from '@material-ui/icons/Grade';
 import { Figure, CloseButton } from 'react-bootstrap';
 import { usePalette } from 'react-palette';
@@ -18,6 +18,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import AddorRemoveButtons from '../../common/components/AddorRemoveButtons/AddorRemoveButtons';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
+import store from '../../common/components/redux/store';
+function TransitionUp(props) {
+    return <Slide {...props} direction="up" />;
+}
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -77,19 +81,57 @@ const useStyles = makeStyles((theme) => ({
         minHeight: 350
     }
 }));
-export default function RestaurantCheckout() {
+function useQuery() {
+    return new URLSearchParams(useLocation().search);
+}
+export default function RestaurantCheckout(props) {
+    let query = useQuery();
     const classes = useStyles();
     const history = useHistory();
     const { data, loading, error } = usePalette("https://www.myrelationshipwithfood.com/wp-content/uploads/2017/09/mrwf.jpg");
     const [open, setOpen] = React.useState(false);
-    const [itemData, setItemData] = React.useState({});
-    // useEffect(() => { }, [data, loading, error]);
+    const [location, setLocation] = React.useState({});
+    const [products, setProducts] = React.useState([]);
+    const [product, setProduct] = React.useState({});
+    useEffect(() => {
+        if (store.getState()) {
+            setLocation(store.getState()['userLocation'][0]);
+        }
+        store.subscribe(() => {
+            setLocation(store.getState()['userLocation'][0]);
+        });
+        if (!_.isEmpty(location)) {
+            const productObj = {
+                status: "available",
+                location: {
+                    longitude: location.geometry.location.lng, latitude: location.geometry.location.lat, maxDistance: 5000
+                },
+                merchant: props.match.params.id,
+            }
+            axios
+                .post('product/data', { merchant: props.match.params.id })
+                .then(res => {
+                    const data = res.data;
+                    if (data.success) {
+                        setProducts(data.products);
+                        console.log(data);
+                    }
+                })
+                .catch((error) => {
+                });
+        } else {
+            store.subscribe(() => {
+                setLocation(store.getState()['userLocation'][0]);
+            })
+        }
+
+    }, [location]);
     const onTitleClick = (itemData) => {
-        setItemData(itemData);
+        setProduct(itemData)
         setOpen(true);
     }
     const handleClose = () => {
-        setItemData({});
+        setProduct({});
         setOpen(false);
     };
 
@@ -110,8 +152,8 @@ export default function RestaurantCheckout() {
                 <div className={`${classes.banner} d-flex w-25 p-4`}>
                     <div className={classes.root} style={{ background: data.vibrant ? data.vibrant : 'white' }}>
                         <div className={classes.headings}>
-                            <Typography component="h1" variant="h3" className='res-name'>
-                                Pizza Hut
+                            <Typography component="h1" variant="h3" className='res-name' style={{ textTransform: 'capitalize' }}>
+                                {props.match.params.restaurantName}
                             </Typography>
                             <Typography variant="caption" className='bhooky-regular'>
                                 Fast food, Pizzas
@@ -132,18 +174,16 @@ export default function RestaurantCheckout() {
                     </div>
                 </div>
             </div>
-            <div className='d-flex'>
-                <div className={classes.grow} />
-                <Container maxWidth="lg" className='restaurant-checkout-main'>
-                    <section className='cards'>
-                        {Object.keys(items).map((itemKey, i) =>
-                            <RestaurantItemCard itemInfo={items[itemKey]} handleTitleClick={count => { onTitleClick(items[itemKey]); setItemCount(count) }} />
-                        )}
-                    </section>
-                </Container>
+            <div className={classes.grow} />
+            <Container component='section' style={{ height: '100vh' }} className='restaurant-checkout-main'>
+                <section className='cards'>
+                    {products.map((product, i) =>
+                        <RestaurantItemCard itemInfo={product} handleTitleClick={count => { onTitleClick(product); setItemCount(count) }} />
+                    )}
+                </section>
+            </Container>
 
-                <CartSummary choosenItems={[{ name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }]} />
-            </div>
+            {/* <CartSummary choosenItems={[{ name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }, { name: 'pizza', count: 4, amount: 1233 }]} /> */}
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -154,12 +194,12 @@ export default function RestaurantCheckout() {
                 <DialogActions className='justify-content-between item-dialog'>
                     <DialogTitle id="scroll-dialog-title">
                         <Typography variant="h5" className='bhooky-semibold'>
-                            {itemData.name}
+                            {product.name}
                         </Typography>
                     </DialogTitle>
                     <CloseButton onClick={handleClose} className='my-4 mr-2'></CloseButton>
                 </DialogActions>
-                <DialogContent dividers={true}>
+                <DialogContent dividers={true} style={{ marginBottom: '65px' }}>
                     <Figure >
                         <Figure.Image
                             src="https://www.myrelationshipwithfood.com/wp-content/uploads/2017/09/mrwf.jpg"
@@ -170,24 +210,24 @@ export default function RestaurantCheckout() {
                         tabIndex={-1}
                         className='bhooky-regular'
                     >
-                        {[...new Array(5)]
-                            .map(
-                                () => `Cras mattis consectetur purus sit amet fermentum.
-Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`,
-                            )
-                            .join('\n')}
+                        {product.description}
                     </DialogContentText>
                     <div className='d-flex dialog-addtocart justify-content-end'>
                         <AddorRemoveButtons size='extraSmall' className='dialog-add' itemCount={itemCount} />
                         <Typography variant="body2" component="p" className='text-light bhooky-semibold pl-3 pr-2 text-center my-auto dialog-item-price'>
-                            {itemData.variantsV2?.pricing_models[0].price ? itemData.variantsV2?.pricing_models[0].price / 100 : itemData.price / 100}
+                            {product.price}
                         </Typography>
                     </div>
                 </DialogContent>
 
             </Dialog>
+            <Snackbar
+                open={true}
+                onClose={handleClose}
+                TransitionComponent={TransitionUp}
+                message="Checkout - >"
+                key='Checkout'
+            />
         </React.Fragment>
     );
 }

@@ -48,92 +48,15 @@ function FindaRestaurant() {
     handleInputChange,
   } = useForm(initialFValues, true);
   return (
-    <div className='d-flex bg-image w-100'>
-      {
-        false &&
-        <Grid container spacing={1} className='grid-overlay'>
-          <Grid item sm className='ml-4'>
-            <div className='contact-form'>
-              <Typography component="h4" className='align-self-start' variant="h4">
-                Get Started
-            </Typography>
-              <form className={classes.form} onSubmit={loginUser} noValidate>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  type="text"
-                  id="restaurantName"
-                  value={values.restaurantName}
-                  label="Name"
-                  name="restaurantName"
-                  onChange={handleInputChange}
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  type="text"
-                  id="restaurantAddress"
-                  value={values.restaurantAddress}
-                  label="Address"
-                  name="restaurantAddress"
-                  onChange={handleInputChange}
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  type="text"
-                  id="bemail"
-                  value={values.businessEmail}
-                  label="Business Email"
-                  name="businessEmail"
-                  onChange={handleInputChange}
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  type="number"
-                  id="businessNumber"
-                  value={values.businessNumber}
-                  label="Business Phone Number"
-                  name="businessNumber"
-                  onChange={handleInputChange}
-                />
+    <div className='d-flex flex-column text-center aboutus-overlay justify-content-center h-100vh bg-image-about-us'>
+      <div className='overlay h-100vh op-5'></div>
+      <div style={{ zIndex: 2, padding: 50 }}>
+        <Typography variant="h3" className='bhooky-semibold text-light '>
+          Coming soon...
+    </Typography>
 
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
-                  Find
-          </Button>
-              </form>
-            </div>
-          </Grid>
-          <Grid item sm className='d-flex'>
-            {/* <Typography component="h6" className='align-self-start' variant="h6">
-            Call Us
-            </Typography> */}
-            <Typography variant="body1" className='align-self-center mt-1 text-light' gutterBottom>
-              Save loads of time on expensing<br />
-            No receipts or headaches. Put everyone on one team account.<br />
-            Arrange and pay for others’ rides<br />
-            Coordinate easily from the web – even if riders don’t have a smartphone.<br />
-            Increase foot traffic<br />
-            Use vouchers to create marketing campaigns that bring people to your door.
-      </Typography>
-
-          </Grid>
-        </Grid>}
-      <CssBaseline />
-
+      </div>
     </div>
-
   );
 }
 

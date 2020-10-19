@@ -7,64 +7,71 @@ import Typography from "@material-ui/core/Typography";
 import Geocode from "react-geocode";
 import { useHistory } from 'react-router-dom';
 import { BhookyConstants } from '../../common/AppConstants';
+import { CardMedia, CircularProgress, TextField } from '@material-ui/core';
+import MyLocationIcon from '@material-ui/icons/MyLocation';
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import LocationSearchInput from '../../common/components/LocationSearchInput/LocationSearchInput';
+import { connect } from 'react-redux';
+
 function Home() {
   const history = useHistory();
-  const getLocation = () => {
+  const [showBackdrop, setShowBackdrop] = React.useState(false);
+  const [location, setLocation] = React.useState("");
+  const getCurrentLocation = () => {
     Geocode.setApiKey(BhookyConstants.apiKey);
+    setShowBackdrop(true);
+
     // history.push('/restaurants');
-    navigator.geolocation.getCurrentPosition(function (position) {
-      // Get address from latidude & longitude.
-      Geocode.fromLatLng(position.coords.latitude, position.coords.longitude).then(
+    navigator.geolocation.watchPosition(async function (position) {
+      await Geocode.fromLatLng(position.coords.latitude, position.coords.longitude).then(
         response => {
-          const address = response.results[0].formatted_address;
-          console.log(response);
+          setShowBackdrop(false);
+          setLocation(response.results[0].formatted_address);
         },
         error => {
+          setShowBackdrop(false);
           console.error(error);
-        }
-      );
-      console.log("Latitude is :", position.coords.latitude);
-      console.log("Longitude is :", position.coords.longitude);
+        });
+    }, () => {
+      setShowBackdrop(false);
     });
   }
   return (
     <div className='d-flex flex-column w-100 '>
       <div>
         <div className="d-flex flex-column justify-content-center align-items-center bg-img-home ">
-          {/* <p>sdcsdcdscdfbcdbfghcvdfg</p> */}
-          <Typography variant="h4" className='text-light mb-3 search-heading' noWrap>
+          <Typography variant="h4" className='text-light mb-3 search-heading mx-3 text-center' >
             Pick your favorite food
-    </Typography>
-          <form className="search-container">
-
-            <input type="text" id="search-bar" placeholder="Enter your location" />
-            <div onClick={getLocation} className='d-flex'>
-              <IconButton
-                component="span"
-              >
-                <LocationSearchingIcon />
-              </IconButton>
-            </div>
-          </form>
+           </Typography>
+          <LocationSearchInput />
         </div>
-        <div className="d-flex flex-row-reverse bg-img-1 align-items-center mx-5 mt-4">
-          <div className='d-flex flex-column w-50 p-5'>
-            <Typography variant="h5" className='font-weight-bold mb-3' noWrap>
+        <div className="row-grid ">
+          {/* <div className='bg-img-1 column-area-1'></div> */}
+          <div className='column-area-1 py-3'>
+            <CardMedia src={require('../../assets/home-page-one.png')} component="img" className='img-prop' />
+          </div>
+          {/* <div class="break"></div> */}
+          <div className='column-area-2 p-4 '>
+            <Typography variant="h5" className='font-weight-bold mb-3' >
               Find Your Favorite Food
-    </Typography>
-            <Typography variant="subtitle1" className='' >
+          </Typography>
+            <Typography variant="subtitle1" >
               From your neighborhood sushi spot to the burger and fries you crave, choose from over 300,000 local and national favorites across the U.S. and Canada
-    </Typography>
+          </Typography>
           </div>
         </div>
-        <div className="d-flex bg-img-2 align-items-center mx-5 mb-4">
-          <div className='d-flex flex-column w-50 p-5'>
-            <Typography variant="h5" className='font-weight-bold mb-3' noWrap>
+        <div className="row-grid">
+          <div className='column-area-2 p-4 '>
+            <Typography variant="h5" className='font-weight-bold mb-3' >
               Become A Partner With Us
-    </Typography>
-            <Typography variant="subtitle1" className='' >
+            </Typography>
+            <Typography variant="subtitle1"  >
               From your neighborhood sushi spot to the burger and fries you crave, choose from over 300,000 local and national favorites across the U.S. and Canada
-    </Typography>
+            </Typography>
+          </div>
+          {/* <div class="break"></div> */}
+          <div className='column-area-1 py-3'>
+            <CardMedia src={require('../../assets/home-page-two.png')} component="img" className='img-prop' />
           </div>
         </div>
       </div>
@@ -75,5 +82,10 @@ function Home() {
 Home.propTypes = {};
 
 Home.defaultProps = {};
+const mapStateToProps = (state) => {
+  return {
+    number: state.location
+  };
+}
+export default connect(mapStateToProps)(Home);
 
-export default Home;

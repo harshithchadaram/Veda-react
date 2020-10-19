@@ -20,11 +20,16 @@
 .nav-link.active{
   color:#ec9c75 !important
 }
+.appName:hover{
+  color: black !important; 
+}
 
 a{
   color: inherit !important;
 }
-
+nav select {
+  display: none;
+}
 .user-menu .Component-paper-5{
   box-shadow: rgba(28, 28, 28, 0.15) 0px 2px 8px;
   border: none !important;

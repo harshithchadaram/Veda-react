@@ -5,7 +5,6 @@ import './AboutUs.scss';
 const useStyles = makeStyles((theme) =>
   createStyles({
     title: {
-      display: "none",
       fontWeight: 600,
       color: 'white',
       fontSize: 50,
@@ -19,9 +18,10 @@ const useStyles = makeStyles((theme) =>
 function AboutUs() {
   const classes = useStyles();
   return (
-    <div className='bg-image-about-us'>
-      <div className='d-flex flex-column text-center  aboutus-overlay justify-content-center w-100 h-100 p-5'>
-        <Typography className={classes.title} variant="button" noWrap>
+    <div className='d-flex flex-column text-center aboutus-overlay justify-content-center h-100vh bg-image-about-us'>
+      <div className='overlay h-100vh op-5'></div>
+      <div style={{ zIndex: 2, padding: 50 }}>
+        <Typography className={classes.title} variant="button" >
           Bhooky
     </Typography>
         {/* <GridListTile key='about-us' cols={10}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -13,6 +13,9 @@ import { CardActionArea } from '@material-ui/core';
 import './RestaurantCard.scss'
 import { useHistory } from 'react-router-dom';
 import * as _ from 'lodash';
+import store from '../redux/store';
+import axios from '../../../api/axios';
+
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -32,8 +35,7 @@ const useStyles = makeStyles((theme) => ({
     },
     cover: {
         minWidth: 150,
-        minHeight: 150,
-        maxHeight: 150
+        minHeight: 150
     },
     controls: {
         display: 'flex',
@@ -60,26 +62,28 @@ export default function RestaurantCard(props) {
     const classes = useStyles();
     const history = useHistory();
     const theme = useTheme();
+
+
     return (
         <Card className={`restaurant-card flex-row ${classes.root}`} onClick={() => { props.showItemDialog(); }}>
             <CardMedia
                 className={classes.cover}
-                image="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTI9wAAiM4eBLesNjgpOTn-_27WXIb6kEevJQ&usqp=CAU"
-                title="Live from space album cover"
+                image={props.product.image.length > 0 ? props.product.image[0] : "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTI9wAAiM4eBLesNjgpOTn-_27WXIb6kEevJQ&usqp=CAU"}
+
             />
 
             <CardContent className={classes.content}>
                 <div className='d-flex'>
                     <div className='d-flex flex-column px-3 py-2'>
-                        <Typography component="h4" variant="h5">
-                            {props.rName}
+                        <Typography component="h5" variant="p" style={{ textTransform: 'capitalize' }}>
+                            {props.product.name}
                         </Typography>
                         <Typography variant="caption" color="textSecondary">
-                            Fast food, Pizzas
-                    </Typography>
+                            {props.product.merchant.name}
+                        </Typography>
                     </div>
                     <Typography variant="body2" component="p" className='item-price bhooky-regular pt-3 mx-2 text-right'>
-                        20
+                        {props.product.price}
                     </Typography>
                 </div>
                 <div className={`${classes.controls} px-3 py-2`}>

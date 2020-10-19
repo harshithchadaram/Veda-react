@@ -22,6 +22,7 @@ import MyLocationIcon from '@material-ui/icons/MyLocation';
 import { BhookyConstants } from '../../AppConstants';
 import Geocode from "react-geocode";
 import { useState } from 'react';
+import store from '../redux/store';
 // import './SignInDialog.scss';
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -205,7 +206,7 @@ function SignUpDialog(props) {
                         </form>
                     </div>
                     <Typography variant="caption" display="block" gutterBottom>
-                        By clicking Sign up or continue with Facebook or Google you agree to the <a href="https://termly.io/resources/templates/terms-and-conditions-template/" target='blank' className='bhooky-semibold'>Terms and Conditions</a> and <a href="https://termly.io/resources/templates/terms-and-conditions-template/" target='blank' className='bhooky-semibold'>Privacy Statement</a>
+                        By clicking Sign up or continue with Facebook or Google you agree to the <a href="/terms-and-conditions" target='blank' className='bhooky-semibold'>Terms and Conditions</a> and <a href="/privacy-statement" target='blank' className='bhooky-semibold'>Privacy Statement</a>
                     </Typography>
                 </DialogContent>
                 <DialogActions className='flex-column mx-3 pt-0 pb-4 my-auto'>

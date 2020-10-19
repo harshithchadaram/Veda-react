@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function RestaurantItemCard(props) {
     const classes = useStyles();
-    const { name, price, variantsV2 } = props.itemInfo
+    const { name, price, image } = props.itemInfo
     const [itemCount, setItemCount] = React.useState(0);
     return (
         <Card className={`restaurant-card ${classes.root}`}>
@@ -55,18 +55,18 @@ export default function RestaurantItemCard(props) {
                 component="img"
                 alt={name}
                 height="140"
-                image="https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_208,h_208,c_fit/rkwpgkihezjivnneepes"
+                image={image.length > 0 ? image[0] : "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTI9wAAiM4eBLesNjgpOTn-_27WXIb6kEevJQ&usqp=CAU"}
                 title={name}
             />
             <CardContent>
-                <Typography className='bhooky-medium item-title' onClick={() => props.handleTitleClick(itemCount)}>
+                <Typography className='bhooky-medium item-title' onClick={() => props.handleTitleClick(itemCount)} style={{ textTransform: 'capitalize' }}>
                     {name}
                 </Typography>
             </CardContent>
 
             <CardActions className='justify-content-between pl-3 mt-auto'>
                 <Typography variant="body2" component="p" className='item-price bhooky-regular'>
-                    {variantsV2?.pricing_models[0].price ? variantsV2?.pricing_models[0].price / 100 : price / 100}
+                    {price}
                 </Typography>
                 <AddorRemoveButtons size='extraSmall' handleCount={(count) => setItemCount(count)} />
             </CardActions>
