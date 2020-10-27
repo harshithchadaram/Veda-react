@@ -23,7 +23,8 @@ import { Provider } from "react-redux";
 import store from "./common/components/redux/store";
 import PrivacyStatement from "./components/PrivacyStatement/PrivacyStatement";
 import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditions";
-
+import Reviews from "./components/reviews/Reviews";
+import * as _ from 'lodash';
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -59,7 +60,9 @@ class App extends React.Component {
   componentWillMount() {
     axios.interceptors.request.use((config) => {
       // debugger;
+      // if (!_.isEqual(config.url, 'product/data')) {
       this.setState({ showBackdrop: true });
+      // }
       return config;
     }, (error) => {
       this.setState({ showBackdrop: false });
@@ -114,6 +117,7 @@ class App extends React.Component {
               <Route path="/privacy-statement" component={PrivacyStatement} />
               <Route path="/terms-and-conditions" component={TermsAndConditions} />
               <Route path="/:restaurantName/:id/order" component={RestaurantCheckout} />
+              <Route path="/:reviews/:merchantid" component={Reviews} />
             </Switch>
           </Container>
 

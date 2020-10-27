@@ -12,6 +12,7 @@ import { useHistory } from 'react-router-dom';
 import AddorRemoveButtons from '../../common/components/AddorRemoveButtons/AddorRemoveButtons';
 import axios from '../../api/axios';
 import store from '../../common/components/redux/store';
+import Loader from '../../common/components/Loader/Loader';
 
 const PrettoSlider = withStyles((theme) => ({
   root: {
@@ -48,15 +49,19 @@ const PrettoSlider = withStyles((theme) => ({
 const priceMarks = [
   {
     value: 1,
-    label: '₹',
+    label: '$',
   },
   {
     value: 2,
-    label: '₹₹',
+    label: '$$',
   },
   {
     value: 3,
-    label: '₹₹₹',
+    label: '$$$',
+  },
+  {
+    value: 4,
+    label: '$$$$',
   }
 ];
 const ratingMarks = [
@@ -104,7 +109,7 @@ function BhookyUserHome() {
   const [products, setProducts] = React.useState([]);
   const [product, setProduct] = React.useState({});
   const [location, setLocation] = React.useState({});
-
+  const [isResponsive, setIsResponsive] = React.useState(false);
   useEffect(() => {
     if (store.getState()) {
       setLocation(store.getState()['userLocation'][0]);
@@ -113,37 +118,35 @@ function BhookyUserHome() {
       setLocation(store.getState()['userLocation'][0]);
     });
     if (!_.isEmpty(location)) {
-      const productObj = {
-        status: "available",
-        // location: {
-        //   longitude: location.geometry.location.lng, latitude: location.geometry.location.lat, maxDistance: 5000
-        // },
-        location: {
-          longitude: -117.781256,
-          latitude: 33.65618,
-          maxDistance: 5000
-        },
-        type: 'user'
-      }
-
-      axios
-        .post('product/data', productObj)
-        .then(res => {
-          const data = res.data;
-          if (data.success) {
-            setProducts(data.products);
-            console.log(data);
-          }
-        })
-        .catch((error) => {
-        });
+      setProductsFromApi(getNofilterPrdctObj());
     } else {
       store.subscribe(() => {
         setLocation(store.getState()['userLocation'][0]);
       })
     }
+    if (window.innerWidth <= 550) {
+      setIsResponsive(true);
+    }
   }, [location])
-
+  window.addEventListener('resize', () => {
+    if (window.innerWidth <= 550) {
+      setIsResponsive(true);
+    }
+    else {
+      setIsResponsive(false);
+    }
+  });
+  const getNofilterPrdctObj = () => {
+    return {
+      status: "available",
+      location: {
+        longitude: -117.826503328979,
+        latitude: 33.68456680171787,
+        maxDistance: 10000
+      },
+      type: 'user'
+    }
+  }
 
   const handleClickOnItem = (itemData) => {
     // history.push('/' + _.replace("Pizza Hut".toLowerCase(), ' ', '-') + '/order')
@@ -152,26 +155,59 @@ function BhookyUserHome() {
   }
 
   const handleClose = () => {
-    debugger;
     console.log('closed');
     setOpen(false);
   };
 
   const [state, setState] = React.useState({
     openDrawer: false,
-    filterChips: [{ name: 'All', active: true }, { name: 'Bakery' }, { name: 'Restaurant' }, { name: 'Snacks & Drinks' }, { name: 'Cafe' }, { name: 'Bar' }],
-    filterDietChips: [{ name: 'All', active: true }, { name: 'Sugar Free' }, { name: 'Vegan' }, { name: 'Without Lactose' }, { name: 'Dietary' }, { name: 'Low Fat' }]
+    filterChips: [{ name: 'Bakery' }, { name: 'Restaurant' }, { name: 'Snacks & Drinks' }, { name: 'Cafe' }, { name: 'Bar' }, { name: 'Sugar Free' }, { name: 'Vegan' }, { name: 'Without Lactose' }, { name: 'Dietary' }, { name: 'Low Fat' }],
+    prices: [{ name: 'All Prices', minPrice: 0, maxPrice: 100 }, { name: 'Under $20', minPrice: 0, maxPrice: 20 }, { name: '$20 - $50', minPrice: 20, maxPrice: 50 }, { name: '$50 - $100', minPrice: 50, maxPrice: 100 }, { name: 'Over $100', minPrice: 100, maxPrice: 100 }],
+    rating: '',
+    isEnabled: true
   });
 
   const onFilterChipClick = (chip) => {
     let chipObj = _.find(state.filterChips, chip);
     chipObj['active'] = !chipObj['active'];
-    setState({ ...state, filterChips: state.filterChips });
+    setState({ ...state, filterChips: state.filterChips, isEnabled: false });
   }
-  const onFilterDietChipClick = (chip) => {
-    let chipObj = _.find(state.filterDietChips, chip);
-    chipObj['active'] = !chipObj['active'];
-    setState({ ...state, filterDietChips: state.filterDietChips });
+  const applyFilters = () => {
+    const currActvPrice = _.find(state.prices, 'active');
+
+    const productObj = {
+      status: "available",
+      location: {
+        longitude: -117.70214807242156,
+        latitude: 33.532032645933704,
+        maxDistance: 10000
+      },
+      category: {
+        $in: _.map(_.filter(state.filterChips, 'active'), 'name')
+      },
+      price: {
+        "minPrice": currActvPrice ? currActvPrice.minPrice : undefined,
+        "maxPrice": currActvPrice ? currActvPrice.maxPrice : undefined
+      },
+      rating: state.rating,
+      type: 'user'
+    }
+    setProductsFromApi(productObj);
+    setState({ ...state, openDrawer: false })
+  }
+
+  const setProductsFromApi = (productObj) => {
+    axios
+      .post('product/data', productObj)
+      .then(res => {
+        const data = res.data;
+        if (data.success) {
+          setProducts(data.products.concat(data.products.concat(data.products)));
+        }
+      })
+      .catch((error) => {
+      });
+
   }
 
   const toggleDrawer = (anchor, open) => (event) => {
@@ -182,27 +218,36 @@ function BhookyUserHome() {
   };
   return (
     <React.Fragment>
-      {/* <CenterSlider /> */}
-      <Container component='section' style={{ height: '100vh' }}>
-        <div className='d-flex justify-content-between mx-3 my-4'>
-          <Typography variant="h5" className='restaurants-title' >
-            All items nearby
+      <Container component='section' className='mb-4'>
+        {(!_.isEmpty(products) || !state.isEnabled) &&
+          <div className='d-flex justify-content-between my-4'>
+            <Typography variant="h5" className='restaurants-title' >
+              All items nearby
         </Typography>
 
-          <Typography variant="body2" >
-            Filters
+            <Typography variant="body2" >
+              Filters
           <div onClick={toggleDrawer('openDrawer', true)} className='d-inline'>
-              <IconButton
-                component="span"
-              >
-                <TuneIcon />
-              </IconButton>
-            </div>
-          </Typography>
-        </div>
+                <IconButton
+                  component="span"
+                >
+                  <TuneIcon />
+                </IconButton>
+              </div>
+            </Typography>
+
+          </div>
+        }
+        {_.isEmpty(products) && !state.isEnabled &&
+          <div className='d-flex flex-column justify-content-center h-100vh text-center'>
+            <CardMedia src={require('../../assets/restaurant.png')} component="img" className='img-prop' />
+            <Typography variant="p" className='bhooky-bold' >
+              NO ITEMS FOUND
+        </Typography>
+          </div>}
         <div className='restaurant-main'>
 
-          <section className='cards'>
+          <section className={`${products.length > 3 ? '' : 'j-items-start'} cards`} >
             {products.map((product, i) =>
 
               <RestaurantCard product={product} showItemDialog={() => handleClickOnItem(product)} />
@@ -212,7 +257,7 @@ function BhookyUserHome() {
         </div>
       </Container>
       <Drawer anchor='right' open={state.openDrawer} onClose={toggleDrawer('openDrawer', false)}>
-        <div className='d-flex'>
+        <div className='d-flex' style={{ minHeight: 65 }}>
           <CloseButton
             component="button"
             className='px-3 close-drawer'
@@ -221,16 +266,29 @@ function BhookyUserHome() {
           <Typography variant="h5" className='p-3' >
             Filters
         </Typography>
-          <Button variant='contained' color="primary" className='ml-auto mr-2 align-self-center text-capitalize'>
+          <Button variant='contained' color="primary" className='ml-auto mr-2 align-self-center text-capitalize' onClick={applyFilters} disabled={state.isEnabled}>
             Apply
           </Button>
-          <Button color="secondary" className='mr-2 align-self-center text-capitalize'>
+          <Button color="secondary" className='mr-2 align-self-center text-capitalize' onClick={(event) => {
+            state.filterChips.forEach(chip => {
+              if (chip.active) {
+                chip.active = false;
+              }
+            });
+            state.prices.forEach(chip => {
+              if (chip.active) {
+                chip.active = false;
+              }
+            });
+            setState({ ...state, rating: '', prices: state.prices, filterChips: state.filterChips, isEnabled: true, openDrawer: false });
+            setProductsFromApi(getNofilterPrdctObj())
+          }}>
             Clear
           </Button>
         </div>
         <Divider />
         <div
-          className={`${classes.list} p-4`}
+          className='m-4 filters'
           role="filters"
         >
           {state.filterChips.map((chip, i) =>
@@ -261,14 +319,31 @@ function BhookyUserHome() {
           <Typography variant="h6" className='py-3 pl-2 filter-title' >
             Price
         </Typography>
-          <PrettoSlider className='mx-4 w-50' valueLabelDisplay="off" aria-label="price slider" defaultValue={0} marks={priceMarks} min={1}
-            max={3} />
+          {/* <PrettoSlider className='mx-4 w-50' valueLabelDisplay="off" aria-label="price slider" defaultValue={0} marks={priceMarks} min={1} value={state.price}
+            max={4} onChange={(event, v) => setState({ ...state, price: v, isEnabled: false })} /> */}
+          {state.prices.map((price, i) =>
+            <Chip
+              size="medium"
+              className='p-1 m-2'
+              label={price.name}
+              color={price.active ? 'primary' : ''}
+              clickable
+              onClick={event => {
+                const currActv = _.find(state.prices, 'active')
+                if (currActv) {
+                  currActv.active = false;
+                }
+                price['active'] = !price['active'];
+                setState({ ...state, prices: state.prices, isEnabled: false });
+              }}
+            />
+          )}
           <Divider className='mx-auto mt-3 divider-filters' />
           <Typography variant="h6" className='py-3 pl-2 filter-title' >
             Rating
         </Typography>
-          <PrettoSlider className='mx-4 w-50' valueLabelDisplay="autp" aria-label="rating slider" defaultValue={0} marks={ratingMarks} min={1}
-            max={5} />
+          <PrettoSlider className='mx-4 w-50' valueLabelDisplay="autp" aria-label="rating slider" defaultValue={0} marks={ratingMarks} min={1} value={state.rating}
+            max={5} onChange={(event, v) => setState({ ...state, rating: v, isEnabled: false })} />
           {/* <List>
             {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
               <ListItem button key={text}>
@@ -292,6 +367,7 @@ function BhookyUserHome() {
         onClose={handleClose}
         fullWidth={true}
         maxWidth={'sm'}
+
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       >
@@ -304,14 +380,14 @@ function BhookyUserHome() {
           <CloseButton onClick={handleClose} className='my-4 mr-2'></CloseButton>
         </DialogActions>
         <DialogContent
-          dividers={true} style={{ marginBottom: '65px' }}>
+          dividers={true} className='m-0 p-0'>
           <CardMedia
             className={classes.cover}
             image={product?.image?.length > 0 ? product?.image[0] : "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTI9wAAiM4eBLesNjgpOTn-_27WXIb6kEevJQ&usqp=CAU"}
           />
           <DialogContentText
             id="scroll-dialog-description"
-            className='bhooky-regular'
+            className='bhooky-regular m-3'
           >
             {product?.description}
           </DialogContentText>
@@ -319,7 +395,7 @@ function BhookyUserHome() {
             <Button color="primary" className='viewmore' onClick={() => history.push('/' + _.replace(product.merchant.name.toLowerCase(), ' ', '-') + '/' + product.merchant._id + '/order')}>
               More from this merchant
             </Button>
-            <div className='d-flex'>
+            <div className={`${isResponsive ? 'flex-column-reverse' : 'flex-row align-items-center'} d-flex `}>
               <AddorRemoveButtons size='extraSmall' className='dialog-add' />
               <Typography variant="body2" component="p" className='text-light bhooky-semibold pl-3 pr-2 text-center my-auto dialog-item-price'>
                 {product?.price}

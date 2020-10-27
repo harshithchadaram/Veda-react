@@ -108,7 +108,7 @@ export default function Profile(props) {
                     <IconButton className={cx(buttonStyles, classes.editBtn, 'profileBtn')} onClick={editOrSaveProfile}>{isEdit ? <DoneIcon /> : <EditIcon />}</IconButton>
                 </div>
                 <MuiPhoneNumber
-                    defaultCountry='in'
+                    defaultCountry='us'
                     onlyCountries={['in', 'us']}
                     variant="outlined"
                     margin="normal"

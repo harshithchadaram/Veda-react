@@ -92,7 +92,7 @@ export default function RestaurantCard(props) {
                         4.1
                     </Typography>
                     <Typography variant="caption" className={classes.cardTimingAttr}>
-                        20 mins
+                        {props.product.distance}
                     </Typography>
                 </div>
             </CardContent>

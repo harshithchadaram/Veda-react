@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { Container, CardMedia, Card, makeStyles, CardContent, Typography, Button, Snackbar, Slide } from '@material-ui/core';
+import { Container, CardMedia, Card, makeStyles, CardContent, Typography, Button, Snackbar, Slide, SnackbarContent } from '@material-ui/core';
 import './RestaurantCheckOut.scss';
 import RestaurantCard from '../../common/components/RestaurantCard/RestaurantCard';
 import { useHistory, useLocation } from 'react-router-dom';
 import axios from '../../api/axios';
 import GradeIcon from '@material-ui/icons/Grade';
-import { Figure, CloseButton } from 'react-bootstrap';
+import { Figure, CloseButton, Nav } from 'react-bootstrap';
 import { usePalette } from 'react-palette';
 import CartSummary from '../CartSummary/CartSummary';
 import RestaurantItemCard from '../../common/components/RestaurantItemCard/RestaurantItemCard';
@@ -19,9 +19,18 @@ import AddorRemoveButtons from '../../common/components/AddorRemoveButtons/Addor
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import store from '../../common/components/redux/store';
+import { Link } from "react-router-dom";
+import Geocode from "react-geocode";
+import Skeleton from '@material-ui/lab/Skeleton';
+
 function TransitionUp(props) {
     return <Slide {...props} direction="up" />;
 }
+const action = (
+    <Button color="primary" variant='contained' size="small">
+        Cart
+    </Button>
+);
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -93,6 +102,7 @@ export default function RestaurantCheckout(props) {
     const [location, setLocation] = React.useState({});
     const [products, setProducts] = React.useState([]);
     const [product, setProduct] = React.useState({});
+    const [merchant, setMerchant] = React.useState({});
     useEffect(() => {
         if (store.getState()) {
             setLocation(store.getState()['userLocation'][0]);
@@ -102,11 +112,10 @@ export default function RestaurantCheckout(props) {
         });
         if (!_.isEmpty(location)) {
             const productObj = {
-                status: "available",
                 location: {
                     longitude: location.geometry.location.lng, latitude: location.geometry.location.lat, maxDistance: 5000
                 },
-                merchant: props.match.params.id,
+                type: 'user',
             }
             axios
                 .post('product/data', { merchant: props.match.params.id })
@@ -115,6 +124,16 @@ export default function RestaurantCheckout(props) {
                     if (data.success) {
                         setProducts(data.products);
                         console.log(data);
+                    }
+                })
+                .catch((error) => {
+                });
+            axios
+                .post('merchant/user/' + props.match.params.id, productObj)
+                .then(res => {
+                    const data = res.data;
+                    if (data.success) {
+                        setMerchant(data.merchantDetails);
                     }
                 })
                 .catch((error) => {
@@ -144,38 +163,58 @@ export default function RestaurantCheckout(props) {
                 <Figure className={classes.bannerFigure}>
                     <Figure.Image
                         className={classes.bannerImage}
-                        src="https://www.myrelationshipwithfood.com/wp-content/uploads/2017/09/mrwf.jpg"
+                        src={merchant ? merchant.images : "https://www.myrelationshipwithfood.com/wp-content/uploads/2017/09/mrwf.jpg"}
                     />
                 </Figure>
                 <div className='overlay'></div>
 
                 <div className={`${classes.banner} d-flex w-25 p-4`}>
                     <div className={classes.root} style={{ background: data.vibrant ? data.vibrant : 'white' }}>
-                        <div className={classes.headings}>
-                            <Typography component="h1" variant="h3" className='res-name' style={{ textTransform: 'capitalize' }}>
-                                {props.match.params.restaurantName}
-                            </Typography>
-                            <Typography variant="caption" className='bhooky-regular'>
-                                Fast food, Pizzas
+                        {_.isEmpty(merchant) ?
+                            <div>
+                                <Skeleton variant="rect" width={180} className='mb-3' />
+                                <Skeleton variant="rect" width={'100%'} className='mb-3' />
+                                <Skeleton variant="rect" width={100} className='mb-3' />
+                                <Skeleton variant="rect" width={'75%'} className='mb-3' />
+                                <Skeleton variant="rect" width={'100%'} className='mb-3' />
+
+                            </div> :
+                            <div className={classes.headings}>
+                                <Typography component="h1" variant="h3" className='res-name' style={{ textTransform: 'capitalize' }}>
+                                    {merchant.name}
+                                </Typography>
+                                <Typography variant="caption" className='bhooky-regular'>
+                                    Fast food, Pizzas
                     </Typography>
-                            <Typography variant="body1" color='textSecondary' className='bhooky-light'>
-                                Moosarambagh, Santoshnagar & Saidabad
-                    </Typography>
-                        </div>
-                        <div className={classes.controls}>
-                            <Typography variant="subtitle1" className='bhooky-medium'>
-                                <GradeIcon className={`${classes.ratingIcon} mr-1`} />
-                        4.1
-                    </Typography>
-                            <Typography variant="subtitle1" className='bhooky-medium'>
-                                20 mins
-                    </Typography>
-                        </div>
+                                <Typography variant="body1" color='textSecondary' className='bhooky-light'>
+                                    {merchant ? merchant.address?.name : ''}
+                                </Typography>
+                            </div>
+                        }
+                        {_.isEmpty(merchant) ?
+                            <div className='d-flex justify-content-between mt-4'>
+                                <Skeleton variant="rect" width={50} />
+                                <Skeleton variant="rect" width={50} />
+                            </div>
+                            :
+                            <div className={classes.controls}>
+
+                                <Typography variant="subtitle1" className='bhooky-medium d-flex py-2'>
+                                    <GradeIcon className={`${classes.ratingIcon} mr-1`} />
+                                    <Nav.Link as={Link} to={`/reviews/${props.match.params.id}`} href='#' className='p-0'>{merchant.totalRating}</Nav.Link>
+                                </Typography>
+                                <Typography variant="subtitle1" className='bhooky-medium'>
+                                    {merchant.distance}
+                                </Typography>
+
+                            </div>
+
+                        }
                     </div>
                 </div>
             </div>
             <div className={classes.grow} />
-            <Container component='section' style={{ height: '100vh' }} className='restaurant-checkout-main'>
+            <Container component='section' className='restaurant-checkout-main'>
                 <section className='cards'>
                     {products.map((product, i) =>
                         <RestaurantItemCard itemInfo={product} handleTitleClick={count => { onTitleClick(product); setItemCount(count) }} />
@@ -221,13 +260,16 @@ export default function RestaurantCheckout(props) {
                 </DialogContent>
 
             </Dialog>
+
             <Snackbar
                 open={true}
+                color='black'
+                className='mb-5'
                 onClose={handleClose}
                 TransitionComponent={TransitionUp}
-                message="Checkout - >"
-                key='Checkout'
-            />
+            >
+                <SnackbarContent message="Your items are waiting..." action={action} />
+            </Snackbar>
         </React.Fragment>
     );
 }

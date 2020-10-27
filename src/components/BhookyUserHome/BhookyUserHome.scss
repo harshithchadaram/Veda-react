@@ -2,7 +2,7 @@
       
         .cards {
             display: grid;
-            grid-template-columns:repeat(auto-fit, minmax(60px, 80px));
+            grid-template-columns:repeat(auto-fit, minmax(60px, 1fr));            
             grid-gap: 35px;
           }
           
@@ -28,16 +28,20 @@
   font-weight: 600 !important;
   font-size: 15px !important;
 }
+.filters{
+  width: 600px;
+}
+.j-items-start{
+  justify-items: start;
+}
 .divider-filters{
   width: 95%;
 }
-// @media only screen and (max-width: 1200px) {
-//     .restaurant-main{
-//         .MuiCard-root{
-//             grid-column-end: span 3;
-//         }
-//     }
-// }
+@media only screen and (max-width: 600px) {
+    .filters{
+       width: auto;
+    }
+}
 // @media only screen and (max-width: 1400px) {
 //     .restaurant-main{
 //         .cards {
@@ -101,7 +105,7 @@
     width: 100%;
     bottom: 0px;
     margin: 0px;
-    position: absolute;
+    position: sticky;
     padding: 15px;
     right: 0px;
     left: 0px;

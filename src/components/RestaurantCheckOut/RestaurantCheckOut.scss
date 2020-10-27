@@ -28,6 +28,7 @@
           
             display: grid;
             grid-template-columns:repeat(auto-fit, minmax(20px, 1fr));
+            justify-items: start;
             grid-gap: 30px;
           }
           

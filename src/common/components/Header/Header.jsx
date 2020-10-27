@@ -375,7 +375,7 @@ function Header(props) {
                     Sign In
                 </Nav.Link>
                 }
-                <Nav.Link as={Link} to="/contact-us" href='#contactus'>
+                <Nav.Link as={Link} to="/cart-summary" href='#cart'>
                   Cart
                 <StyledBadge badgeContent={4} color="secondary">
                     <ShoppingCartIcon />

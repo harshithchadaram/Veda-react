@@ -144,7 +144,7 @@ function SignUpDialog(props) {
                                 />}
                             </div>
                             <MuiPhoneNumber
-                                defaultCountry='in'
+                                defaultCountry='us'
                                 onlyCountries={['in', 'us']}
                                 variant="outlined"
                                 margin="normal"

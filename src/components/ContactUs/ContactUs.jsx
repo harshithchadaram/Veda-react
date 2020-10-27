@@ -16,7 +16,7 @@ import axios from '../../api/axios';
 import { Collapse } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import MuiPhoneNumber from "material-ui-phone-number";
-
+import * as _ from 'lodash';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(5),
@@ -44,8 +44,7 @@ export default function ContactUs(props) {
     lastName: "",
     businessEmail: "",
     businessNumber: "",
-    restaurantName: "",
-    restaurantAddress: "",
+    type: "user",
     query: ""
   };
   const classes = useStyles();
@@ -71,18 +70,17 @@ export default function ContactUs(props) {
   const [alertInfo, setAlertInfo] = React.useState({});
   const history = useHistory();
   const submitQuery = (event) => {
+    debugger;
     event.preventDefault();
     window.scrollTo({ behavior: 'smooth', top: 0 });
     const queryObj = {
       userName: values.firstName + " " + values.lastName,
-      email: values.email,
-      mobile: "9640109420",
-      merchantName: "Abc restaurant",
-      merchantAddress: "Hyderabad",
-      title: "Products query",
-      description: values.query
+      email: values.businessEmail,
+      mobile: values.businessNumber,
+      query: values.query,
+      type: values.type
     }
-
+    console.log(queryObj);
     axios
       .post(`/query/create`, queryObj)
       .then(res => {
@@ -165,7 +163,7 @@ export default function ContactUs(props) {
                     onChange={handleInputChange}
                   />
                   <MuiPhoneNumber
-                    defaultCountry='in'
+                    defaultCountry='us'
                     onlyCountries={['in', 'us']}
                     variant="outlined"
                     margin="normal"
@@ -209,6 +207,7 @@ export default function ContactUs(props) {
                     variant="contained"
                     color="primary"
                     className={classes.submit}
+                    disabled={_.values(values).some(v => v === "")}
                   >
                     Submit
           </Button>
