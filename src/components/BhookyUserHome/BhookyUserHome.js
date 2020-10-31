@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './BhookyUserHome.scss';
 import CenterSlider from '../../common/components/Slider/Slider';
@@ -13,6 +13,7 @@ import AddorRemoveButtons from '../../common/components/AddorRemoveButtons/Addor
 import axios from '../../api/axios';
 import store from '../../common/components/redux/store';
 import Loader from '../../common/components/Loader/Loader';
+import AppContext from '../../common/components/store/AuthContext';
 
 const PrettoSlider = withStyles((theme) => ({
   root: {
@@ -104,7 +105,7 @@ function BhookyUserHome() {
 
   const classes = useStyles();
   const history = useHistory();
-
+  const { globalState } = useContext(AppContext);
   const [open, setOpen] = React.useState(false);
   const [products, setProducts] = React.useState([]);
   const [product, setProduct] = React.useState({});
@@ -196,13 +197,35 @@ function BhookyUserHome() {
     setState({ ...state, openDrawer: false })
   }
 
+  const updateCart = (quantity) => {
+    const cartObj = {
+      user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
+      deviceId: store.getState().uuid,
+      merchant: product.merchant._id,
+      product: product._id,
+      quantity: 1,
+      productName: product.name,
+      productPrice: product.price
+    }
+    axios
+      .post('user/cart', { item: cartObj })
+      .then(res => {
+        const data = res.data;
+        if (data.success) {
+          console.log(data);
+        }
+      })
+      .catch((error) => {
+      });
+  }
+
   const setProductsFromApi = (productObj) => {
     axios
       .post('product/data', productObj)
       .then(res => {
         const data = res.data;
         if (data.success) {
-          setProducts(data.products.concat(data.products.concat(data.products)));
+          setProducts(data.products);
         }
       })
       .catch((error) => {
@@ -247,7 +270,7 @@ function BhookyUserHome() {
           </div>}
         <div className='restaurant-main'>
 
-          <section className={`${products.length > 3 ? '' : 'j-items-start'} cards`} >
+          <section className={`${products.length > 3 ? '' : 'justify-items-start'} cards`} >
             {products.map((product, i) =>
 
               <RestaurantCard product={product} showItemDialog={() => handleClickOnItem(product)} />
@@ -396,7 +419,7 @@ function BhookyUserHome() {
               More from this merchant
             </Button>
             <div className={`${isResponsive ? 'flex-column-reverse' : 'flex-row align-items-center'} d-flex `}>
-              <AddorRemoveButtons size='extraSmall' className='dialog-add' />
+              <AddorRemoveButtons size='extraSmall' className='dialog-add' handleCart={updateCart} />
               <Typography variant="body2" component="p" className='text-light bhooky-semibold pl-3 pr-2 text-center my-auto dialog-item-price'>
                 {product?.price}
               </Typography>

@@ -5,7 +5,7 @@ import RemoveCircleIcon from '@material-ui/icons/Remove';
 import { Typography, Button } from '@material-ui/core';
 import './AddorRemoveButtons.scss';
 export default function AddorRemoveButtons(props) {
-    const [count, setCount] = useState(props.itemCount ? props.itemCount : 0);
+    let [count, setCount] = useState(props.count);
     const incBtn = () => {
         let currCount = count;
         setCount(currCount + 1);
@@ -22,18 +22,18 @@ export default function AddorRemoveButtons(props) {
             {count !== 0 ?
                 <div className='d-flex add-or-remove'>
 
-                    <ResizeableIconButton disableRipple={true} disableFocusRipple={true} onClick={event => { decBtn(); }} size='small' className='remove'>
+                    <ResizeableIconButton disableRipple={true} disableFocusRipple={true} onClick={event => { props.handleCart(); setCount(count => count - 1); }} size='small' className='remove'>
                         <RemoveCircleIcon />
                     </ResizeableIconButton>
                     <Typography display='block' variant="subtitle2" component='span' className='align-self-center px-2 item-count bhooky-bold'>
                         {count}
                     </Typography>
-                    <ResizeableIconButton disableRipple={true} disableFocusRipple={true} onClick={event => { incBtn(); }} size='small' className='add'>
+                    <ResizeableIconButton disableRipple={true} disableFocusRipple={true} onClick={event => { props.handleCart(); setCount(count => count + 1); }} size='small' className='add'>
                         <AddCircleIcon />
                     </ResizeableIconButton>
 
                 </div>
-                : <Button variant='outlined' color='default' onClick={incBtn}>Add</Button>}
+                : <Button variant='outlined' color='default' onClick={event => { props.handleCart(); setCount(1); }}>Add</Button>}
         </div>
     );
 }

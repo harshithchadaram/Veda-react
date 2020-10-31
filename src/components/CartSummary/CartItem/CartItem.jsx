@@ -4,7 +4,7 @@ import { Card, CardContent, Typography, makeStyles } from '@material-ui/core';
 import AddorRemoveButtons from '../../../common/components/AddorRemoveButtons/AddorRemoveButtons';
 const useStyles = makeStyles((theme) => ({
     item: {
-        width: 300
+        width: 'auto'
     },
     itemName: {
         minWidth: '40%'
@@ -19,11 +19,11 @@ export default function CartItem(props) {
             <Card className='my-3 item-card'>
                 <CardContent className={`${classes.item} d-flex justify-content-between align-items-center py-2`}>
                     <Typography variant="body2" className={`${classes.itemName} item-name`}>
-                        {item.name}
+                        {item.productName}
                     </Typography>
-                    <AddorRemoveButtons itemCount={item.count} />
+                    <AddorRemoveButtons count={item.quantity} />
                     <Typography variant="body2" className='item-price text-right bhooky-semibold'>
-                        {item.amount}
+                        {item.productPrice}
                     </Typography>
                 </CardContent>
             </Card>

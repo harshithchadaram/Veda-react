@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) =>
       cursor: "pointer",
       display: 'flex',
       alignSelf: 'start',
-      marginTop: 20
+      marginTop: 30
     }
   })
 );
@@ -324,9 +324,12 @@ function Header(props) {
             Sign in
             </Nav.Link>
         </Nav> */}
-          {isResponsive ? <MenuIcon
-            className={classes.sideBarIcon}
-            onClick={() => { setDrawer(true) }} /> :
+          {isResponsive ?
+            <Badge color="primary" variant="dot" invisible={false} className={classes.sideBarIcon}>
+              <MenuIcon
+
+                onClick={() => { setDrawer(true) }} />
+            </Badge> :
             <Navbar>
               <Nav>
                 <Nav.Link as={Link} to="/about-us" href='#aboutus'>
@@ -444,7 +447,7 @@ function Header(props) {
               Contact Us
             </Nav.Link>
 
-            <Nav.Link as={Link} to="/contact-us" href='#contactus'>
+            <Nav.Link as={Link} to="/cart-summary" href='#cartsummary'>
               Cart
                 <StyledBadge badgeContent={4} color="secondary">
                 <ShoppingCartIcon />

@@ -41,7 +41,7 @@ const AuthContext = React.createContext({});
 export const AuthProvider = AuthContext.Provider;
 export default function SignIn(props) {
   const initialFValues = {
-    email: "",
+    mobile: "",
     password: ""
   };
 
@@ -88,11 +88,11 @@ export default function SignIn(props) {
                 required
                 fullWidth
                 type="number"
-                id="email"
-                value={values.email}
-                label="Email"
-                name="email"
-                autoComplete="email"
+                id="mobile"
+                value={values.mobile}
+                label="Mobile"
+                name="mobile"
+                autoComplete="mobile"
                 onChange={handleInputChange}
                 autoFocus
               />
@@ -133,7 +133,7 @@ export default function SignIn(props) {
               </Grid>
               <div className='d-flex mt-4 justify-content-between'>
                 <GoogleBtn className='w-100' handleLogin={onSuccessfulGoogleLogin} />
-                <FacebookButton />
+                {/* <FacebookButton /> */}
               </div>
 
             </form>

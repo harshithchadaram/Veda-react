@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Container, CardMedia, Card, makeStyles, CardContent, Typography, Button, Snackbar, Slide, SnackbarContent } from '@material-ui/core';
 import './RestaurantCheckOut.scss';
 import RestaurantCard from '../../common/components/RestaurantCard/RestaurantCard';
@@ -22,6 +22,7 @@ import store from '../../common/components/redux/store';
 import { Link } from "react-router-dom";
 import Geocode from "react-geocode";
 import Skeleton from '@material-ui/lab/Skeleton';
+import AppContext from '../../common/components/store/AuthContext';
 
 function TransitionUp(props) {
     return <Slide {...props} direction="up" />;
@@ -103,6 +104,29 @@ export default function RestaurantCheckout(props) {
     const [products, setProducts] = React.useState([]);
     const [product, setProduct] = React.useState({});
     const [merchant, setMerchant] = React.useState({});
+    const { globalState } = useContext(AppContext);
+
+    const updateCart = (currProduct) => {
+        const cartObj = {
+            user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
+            deviceId: store.getState().uuid,
+            merchant: currProduct.merchant._id,
+            product: currProduct._id,
+            quantity: 1,
+            productName: currProduct.name,
+            productPrice: currProduct.price
+        }
+        axios
+            .post('user/cart', { item: cartObj })
+            .then(res => {
+                const data = res.data;
+                if (data.success) {
+                    console.log(data);
+                }
+            })
+            .catch((error) => {
+            });
+    }
     useEffect(() => {
         if (store.getState()) {
             setLocation(store.getState()['userLocation'][0]);
@@ -217,7 +241,9 @@ export default function RestaurantCheckout(props) {
             <Container component='section' className='restaurant-checkout-main'>
                 <section className='cards'>
                     {products.map((product, i) =>
-                        <RestaurantItemCard itemInfo={product} handleTitleClick={count => { onTitleClick(product); setItemCount(count) }} />
+                        <RestaurantItemCard itemInfo={product} handleTitleClick={count => { onTitleClick(product); }} handleCart={e => {
+                            updateCart(product)
+                        }} />
                     )}
                 </section>
             </Container>
@@ -252,7 +278,7 @@ export default function RestaurantCheckout(props) {
                         {product.description}
                     </DialogContentText>
                     <div className='d-flex dialog-addtocart justify-content-end'>
-                        <AddorRemoveButtons size='extraSmall' className='dialog-add' itemCount={itemCount} />
+                        <AddorRemoveButtons size='extraSmall' className='dialog-add' count={product.quantity} />
                         <Typography variant="body2" component="p" className='text-light bhooky-semibold pl-3 pr-2 text-center my-auto dialog-item-price'>
                             {product.price}
                         </Typography>

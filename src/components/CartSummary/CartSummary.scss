@@ -22,8 +22,10 @@
     height: 100%;
 }
 .summary-root{
-    height:calc(100vh - 197px);
-    position: sticky;
+    // height:calc(100vh - 197px);
+    height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+  height: calc((var(--vh, 1vh) * 100) - 197px;
+    min-height: -webkit-fill-available;
     top: 0;
 }
 .cart-no-items{
@@ -64,8 +66,7 @@
     }
 }
 .cart-items-root{
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow:auto;
     .cart-items{
     overflow: auto;
         .MuiCardContent-root:last-child{

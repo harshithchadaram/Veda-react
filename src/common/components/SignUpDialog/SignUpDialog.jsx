@@ -231,7 +231,7 @@ function SignUpDialog(props) {
                     </div>}
                     {isFormSignUp && <div className='d-flex justify-content-between w-100'>
                         <GoogleButton className='w-100' btnText='Sign Up' handleLogin={signUp} />
-                        <FacebookButton />
+                        {/* <FacebookButton /> */}
                     </div>}
                 </DialogActions>
             </Dialog>

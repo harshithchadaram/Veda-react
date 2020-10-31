@@ -25,6 +25,9 @@ import PrivacyStatement from "./components/PrivacyStatement/PrivacyStatement";
 import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditions";
 import Reviews from "./components/reviews/Reviews";
 import * as _ from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+import { updateUUID } from "./common/components/redux/actions";
+import CartSummary from "./components/CartSummary/CartSummary";
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -55,6 +58,7 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
+    store.dispatch(updateUUID(uuidv4()));
   }
 
   componentWillMount() {
@@ -114,6 +118,7 @@ class App extends React.Component {
               <Route path="/contact-us" component={ContactUs} />
               <PrivateRoute path="/profile" component={Profile} />
               <Route path="/restaurants" component={BhookyUserHome} />
+              <Route path="/cart-summary" component={CartSummary} />
               <Route path="/privacy-statement" component={PrivacyStatement} />
               <Route path="/terms-and-conditions" component={TermsAndConditions} />
               <Route path="/:restaurantName/:id/order" component={RestaurantCheckout} />
