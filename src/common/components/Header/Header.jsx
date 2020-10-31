@@ -285,7 +285,7 @@ function Header(props) {
           <div className={`${showinNewLine ? 'flex-column' : 'flex-row align-items-center'} d-flex `}>
             <Typography className={classes.title} variant="button" noWrap style={{ display: 'block' }}>
               <Nav.Link as={Link} to="/" href='#' style={{ textDecoration: 'none', fontSize: '25px' }} className='appName' >
-                Bhooky
+                VuaciFood
             </Nav.Link>
               {/* <a href='/' style={{ textDecoration: 'none' }}>Bhooky </a> */}
             </Typography>
