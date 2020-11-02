@@ -225,14 +225,14 @@ function SignUpDialog(props) {
                             Already have an account? Sign In
                         </Link>
                     </div>
-                    {isFormSignUp && <div class="or-div my-2">
+                  {/*  {isFormSignUp && <div class="or-div my-2">
                         <hr class="or-hr" />
                         <span class="or-span">or</span>
                     </div>}
                     {isFormSignUp && <div className='d-flex justify-content-between w-100'>
                         <GoogleButton className='w-100' btnText='Sign Up' handleLogin={signUp} />
-                        {/* <FacebookButton /> */}
-                    </div>}
+                        <FacebookButton /> 
+                    </div>} */}
                 </DialogActions>
             </Dialog>
 

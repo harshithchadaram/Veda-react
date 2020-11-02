@@ -22,7 +22,7 @@ function AboutUs() {
       <div className='overlay h-100vh op-5'></div>
       <div style={{ zIndex: 2, padding: 50 }}>
         <Typography className={classes.title} variant="button" >
-          Bhooky
+          Vuacifood
     </Typography>
         {/* <GridListTile key='about-us' cols={10}>
         <img src={aboutUs} />
