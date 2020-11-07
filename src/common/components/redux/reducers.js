@@ -1,8 +1,9 @@
-import { UPDATE_LOCATION, UPDATE_UUID } from './actions';
+import { UPDATE_CART, UPDATE_LOCATION, UPDATE_UUID } from './actions';
 
 const initialState = {
     userLocation: '',
-    uuid: ''
+    uuid: '',
+    cart: {}
 };
 
 function reducer(state = initialState, action) {
@@ -17,6 +18,11 @@ function reducer(state = initialState, action) {
             return {
                 ...state,
                 uuid: action.uuid
+            };
+        case UPDATE_CART:
+            return {
+                ...state,
+                cart: action.cart
             };
         default:
             return state;

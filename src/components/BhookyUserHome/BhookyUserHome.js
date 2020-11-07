@@ -14,6 +14,9 @@ import axios from '../../api/axios';
 import store from '../../common/components/redux/store';
 import Loader from '../../common/components/Loader/Loader';
 import AppContext from '../../common/components/store/AuthContext';
+import Axios from 'axios';
+import { updateCartCount } from '../../common/components/redux/actions';
+import { connect } from 'react-redux';
 
 const PrettoSlider = withStyles((theme) => ({
   root: {
@@ -101,7 +104,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function BhookyUserHome() {
+function BhookyUserHome(props) {
 
   const classes = useStyles();
   const history = useHistory();
@@ -141,8 +144,8 @@ function BhookyUserHome() {
     return {
       status: "available",
       location: {
-        longitude: -117.826503328979,
-        latitude: 33.68456680171787,
+        longitude: -117.71494388580321,
+        latitude: 33.523677791289195,
         maxDistance: 10000
       },
       type: 'user'
@@ -179,8 +182,8 @@ function BhookyUserHome() {
     const productObj = {
       status: "available",
       location: {
-        longitude: -117.70214807242156,
-        latitude: 33.532032645933704,
+        longitude: -117.71494388580321,
+        latitude: 33.523677791289195,
         maxDistance: 10000
       },
       category: {
@@ -197,21 +200,33 @@ function BhookyUserHome() {
     setState({ ...state, openDrawer: false })
   }
 
-  const updateCart = (quantity) => {
+  const updateCart = (count) => {
     const cartObj = {
       user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
       deviceId: store.getState().uuid,
       merchant: product.merchant._id,
       product: product._id,
-      quantity: 1,
+      quantity: count,
       productName: product.name,
       productPrice: product.price
     }
     axios
-      .post('user/cart', { item: cartObj })
+      .post('user/cart', cartObj)
       .then(res => {
         const data = res.data;
+        const key = product._id;
+        const obj = {};
+        obj[key] = count;
         if (data.success) {
+          let currPrducts = products;
+          _.forEach(data.cartItems, productObj => {
+            const cartProdct = _.find(currPrducts, { '_id': productObj.product });
+            if (cartProdct) {
+              cartProdct.cartCount = productObj.quantity;
+            }
+          });
+          setProducts(currPrducts);
+          props.dispatch(updateCartCount(_.merge(props.cart, obj)));
           console.log(data);
         }
       })
@@ -220,14 +235,28 @@ function BhookyUserHome() {
   }
 
   const setProductsFromApi = (productObj) => {
-    axios
-      .post('product/data', productObj)
-      .then(res => {
-        const data = res.data;
+    const cartObj = {
+      user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
+      deviceId: store.getState().uuid,
+    }
+    Axios.all([axios
+      .post('product/data', productObj),
+    axios.post('user/getcartitems', cartObj)])
+      .then(Axios.spread((res1, res2) => {
+        const data = res1.data;
+        const cartData = res2.data;
         if (data.success) {
-          setProducts(data.products);
+          if (cartData.success) {
+            _.forEach(cartData.cartItems, productObj => {
+              const cartProdct = _.find(data.products, { '_id': productObj.product });
+              if (cartProdct) {
+                cartProdct.cartCount = productObj.quantity;
+              }
+            });
+            setProducts(data.products);
+          }
         }
-      })
+      }))
       .catch((error) => {
       });
 
@@ -419,7 +448,7 @@ function BhookyUserHome() {
               More from this merchant
             </Button>
             <div className={`${isResponsive ? 'flex-column-reverse' : 'flex-row align-items-center'} d-flex `}>
-              <AddorRemoveButtons size='extraSmall' className='dialog-add' handleCart={updateCart} />
+              <AddorRemoveButtons size='extraSmall' className='dialog-add' handleCart={updateCart} cartCount={product.cartCount} />
               <Typography variant="body2" component="p" className='text-light bhooky-semibold pl-3 pr-2 text-center my-auto dialog-item-price'>
                 {product?.price}
               </Typography>
@@ -432,8 +461,9 @@ function BhookyUserHome() {
   );
 }
 
-BhookyUserHome.propTypes = {};
-
-BhookyUserHome.defaultProps = {};
-
-export default BhookyUserHome;
+function mapStateToProps(state) {
+  return {
+    cart: state.cart
+  };
+}
+export default connect(mapStateToProps)(BhookyUserHome);

@@ -11,6 +11,8 @@ import { CardImg } from 'react-bootstrap';
 import axios from '../../api/axios';
 import AppContext from '../../common/components/store/AuthContext';
 import store from '../../common/components/redux/store';
+import { updateCartCount } from '../../common/components/redux/actions';
+import { connect } from 'react-redux';
 const useStyles = makeStyles((theme) => ({
     summary: {
         margin: 'auto',
@@ -18,282 +20,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function CartSummary(props) {
-    const [choosenItems, setChoosenItems] = React.useState([
-        {
-            "quantity": 2,
-            "_id": "5f9a3b842a50b3cd2bf28eb9",
-            "user": "5f54c2cef804340ebb65b6b9",
-            "merchant": {
-                "location": {
-                    "type": "Point",
-                    "coordinates": [
-                        -117.809411,
-                        33.684606
-                    ]
-                },
-                "address": {
-                    "name": "3988 Barranca Parkway, Irvine 92606",
-                    "pincode": "92606"
-                },
-                "images": [
-                    "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1920,format=auto,quality=50/https://cdn.doordash.com/media/store%2Fheader%2F5579.jpg"
-                ],
-                "_id": "5f34407443acf652e0a562df",
-                "name": "California Fish Grill",
-                "email": "sreeni2078@gmail.com",
-                "mobile": "9912654081",
-                "city": "Orange County",
-                "state": "Irvine",
-                "id": "MERCHANT51"
-            },
-            "product": "5f514284160add8797fc5bc2",
-            "productName": "product Name",
-            "productPrice": 123,
-            "id": "PRODUCT332",
-            "createdTime": "2020-10-29T03:48:20.980Z",
-            "updatedTime": "2020-10-29T03:48:20.980Z",
-            "__v": 0
-        }, {
-            "quantity": 2,
-            "_id": "5f9a3b842a50b3cd2bf28eb9",
-            "user": "5f54c2cef804340ebb65b6b9",
-            "merchant": {
-                "location": {
-                    "type": "Point",
-                    "coordinates": [
-                        -117.809411,
-                        33.684606
-                    ]
-                },
-                "address": {
-                    "name": "3988 Barranca Parkway, Irvine 92606",
-                    "pincode": "92606"
-                },
-                "images": [
-                    "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1920,format=auto,quality=50/https://cdn.doordash.com/media/store%2Fheader%2F5579.jpg"
-                ],
-                "_id": "5f34407443acf652e0a562df",
-                "name": "California Fish Grill",
-                "email": "sreeni2078@gmail.com",
-                "mobile": "9912654081",
-                "city": "Orange County",
-                "state": "Irvine",
-                "id": "MERCHANT51"
-            },
-            "product": "5f514284160add8797fc5bc2",
-            "productName": "product Name",
-            "productPrice": 123,
-            "id": "PRODUCT332",
-            "createdTime": "2020-10-29T03:48:20.980Z",
-            "updatedTime": "2020-10-29T03:48:20.980Z",
-            "__v": 0
-        }, {
-            "quantity": 2,
-            "_id": "5f9a3b842a50b3cd2bf28eb9",
-            "user": "5f54c2cef804340ebb65b6b9",
-            "merchant": {
-                "location": {
-                    "type": "Point",
-                    "coordinates": [
-                        -117.809411,
-                        33.684606
-                    ]
-                },
-                "address": {
-                    "name": "3988 Barranca Parkway, Irvine 92606",
-                    "pincode": "92606"
-                },
-                "images": [
-                    "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1920,format=auto,quality=50/https://cdn.doordash.com/media/store%2Fheader%2F5579.jpg"
-                ],
-                "_id": "5f34407443acf652e0a562df",
-                "name": "California Fish Grill",
-                "email": "sreeni2078@gmail.com",
-                "mobile": "9912654081",
-                "city": "Orange County",
-                "state": "Irvine",
-                "id": "MERCHANT51"
-            },
-            "product": "5f514284160add8797fc5bc2",
-            "productName": "product Name",
-            "productPrice": 123,
-            "id": "PRODUCT332",
-            "createdTime": "2020-10-29T03:48:20.980Z",
-            "updatedTime": "2020-10-29T03:48:20.980Z",
-            "__v": 0
-        }, {
-            "quantity": 2,
-            "_id": "5f9a3b842a50b3cd2bf28eb9",
-            "user": "5f54c2cef804340ebb65b6b9",
-            "merchant": {
-                "location": {
-                    "type": "Point",
-                    "coordinates": [
-                        -117.809411,
-                        33.684606
-                    ]
-                },
-                "address": {
-                    "name": "3988 Barranca Parkway, Irvine 92606",
-                    "pincode": "92606"
-                },
-                "images": [
-                    "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1920,format=auto,quality=50/https://cdn.doordash.com/media/store%2Fheader%2F5579.jpg"
-                ],
-                "_id": "5f34407443acf652e0a562df",
-                "name": "California Fish Grill",
-                "email": "sreeni2078@gmail.com",
-                "mobile": "9912654081",
-                "city": "Orange County",
-                "state": "Irvine",
-                "id": "MERCHANT51"
-            },
-            "product": "5f514284160add8797fc5bc2",
-            "productName": "product Name",
-            "productPrice": 123,
-            "id": "PRODUCT332",
-            "createdTime": "2020-10-29T03:48:20.980Z",
-            "updatedTime": "2020-10-29T03:48:20.980Z",
-            "__v": 0
-        }, {
-            "quantity": 2,
-            "_id": "5f9a3b842a50b3cd2bf28eb9",
-            "user": "5f54c2cef804340ebb65b6b9",
-            "merchant": {
-                "location": {
-                    "type": "Point",
-                    "coordinates": [
-                        -117.809411,
-                        33.684606
-                    ]
-                },
-                "address": {
-                    "name": "3988 Barranca Parkway, Irvine 92606",
-                    "pincode": "92606"
-                },
-                "images": [
-                    "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1920,format=auto,quality=50/https://cdn.doordash.com/media/store%2Fheader%2F5579.jpg"
-                ],
-                "_id": "5f34407443acf652e0a562df",
-                "name": "California Fish Grill",
-                "email": "sreeni2078@gmail.com",
-                "mobile": "9912654081",
-                "city": "Orange County",
-                "state": "Irvine",
-                "id": "MERCHANT51"
-            },
-            "product": "5f514284160add8797fc5bc2",
-            "productName": "product Name",
-            "productPrice": 123,
-            "id": "PRODUCT332",
-            "createdTime": "2020-10-29T03:48:20.980Z",
-            "updatedTime": "2020-10-29T03:48:20.980Z",
-            "__v": 0
-        }, {
-            "quantity": 2,
-            "_id": "5f9a3b842a50b3cd2bf28eb9",
-            "user": "5f54c2cef804340ebb65b6b9",
-            "merchant": {
-                "location": {
-                    "type": "Point",
-                    "coordinates": [
-                        -117.809411,
-                        33.684606
-                    ]
-                },
-                "address": {
-                    "name": "3988 Barranca Parkway, Irvine 92606",
-                    "pincode": "92606"
-                },
-                "images": [
-                    "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1920,format=auto,quality=50/https://cdn.doordash.com/media/store%2Fheader%2F5579.jpg"
-                ],
-                "_id": "5f34407443acf652e0a562df",
-                "name": "California Fish Grill",
-                "email": "sreeni2078@gmail.com",
-                "mobile": "9912654081",
-                "city": "Orange County",
-                "state": "Irvine",
-                "id": "MERCHANT51"
-            },
-            "product": "5f514284160add8797fc5bc2",
-            "productName": "product Name",
-            "productPrice": 123,
-            "id": "PRODUCT332",
-            "createdTime": "2020-10-29T03:48:20.980Z",
-            "updatedTime": "2020-10-29T03:48:20.980Z",
-            "__v": 0
-        }, {
-            "quantity": 2,
-            "_id": "5f9a3b842a50b3cd2bf28eb9",
-            "user": "5f54c2cef804340ebb65b6b9",
-            "merchant": {
-                "location": {
-                    "type": "Point",
-                    "coordinates": [
-                        -117.809411,
-                        33.684606
-                    ]
-                },
-                "address": {
-                    "name": "3988 Barranca Parkway, Irvine 92606",
-                    "pincode": "92606"
-                },
-                "images": [
-                    "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1920,format=auto,quality=50/https://cdn.doordash.com/media/store%2Fheader%2F5579.jpg"
-                ],
-                "_id": "5f34407443acf652e0a562df",
-                "name": "California Fish Grill",
-                "email": "sreeni2078@gmail.com",
-                "mobile": "9912654081",
-                "city": "Orange County",
-                "state": "Irvine",
-                "id": "MERCHANT51"
-            },
-            "product": "5f514284160add8797fc5bc2",
-            "productName": "product Name",
-            "productPrice": 123,
-            "id": "PRODUCT332",
-            "createdTime": "2020-10-29T03:48:20.980Z",
-            "updatedTime": "2020-10-29T03:48:20.980Z",
-            "__v": 0
-        }, {
-            "quantity": 2,
-            "_id": "5f9a3b842a50b3cd2bf28eb9",
-            "user": "5f54c2cef804340ebb65b6b9",
-            "merchant": {
-                "location": {
-                    "type": "Point",
-                    "coordinates": [
-                        -117.809411,
-                        33.684606
-                    ]
-                },
-                "address": {
-                    "name": "3988 Barranca Parkway, Irvine 92606",
-                    "pincode": "92606"
-                },
-                "images": [
-                    "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1920,format=auto,quality=50/https://cdn.doordash.com/media/store%2Fheader%2F5579.jpg"
-                ],
-                "_id": "5f34407443acf652e0a562df",
-                "name": "California Fish Grill",
-                "email": "sreeni2078@gmail.com",
-                "mobile": "9912654081",
-                "city": "Orange County",
-                "state": "Irvine",
-                "id": "MERCHANT51"
-            },
-            "product": "5f514284160add8797fc5bc2",
-            "productName": "product Name",
-            "productPrice": 123,
-            "id": "PRODUCT332",
-            "createdTime": "2020-10-29T03:48:20.980Z",
-            "updatedTime": "2020-10-29T03:48:20.980Z",
-            "__v": 0
-        }
-    ]);
+function CartSummary(props) {
+    const [choosenItems, setChoosenItems] = React.useState([]);
+    const [priceObj, setPriceObj] = React.useState({});
     const classes = useStyles();
     const { globalState } = useContext(AppContext);
     const clearCart = () => {
@@ -309,13 +38,40 @@ export default function CartSummary(props) {
             .then(res => {
                 const data = res.data;
                 if (data.success) {
+                    setChoosenItems(data.cartItems);
+                    setPriceObj({ tax: data.taxPercent, total: data.totalPrice });
                     console.log(data);
                 }
             })
             .catch((error) => {
             });
-    }, [])
-    useEffect(() => { console.log(choosenItems.length) }, [choosenItems])
+    }, []);
+    const updateCart = (currProduct, count) => {
+        const cartObj = {
+            user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
+            deviceId: store.getState().uuid,
+            merchant: currProduct.merchant._id,
+            product: currProduct.product,
+            quantity: count,
+            productName: currProduct.name,
+            productPrice: currProduct.price
+        }
+        axios
+            .post('user/cart', cartObj)
+            .then(res => {
+                const data = res.data;
+                const key = currProduct.product;
+                const obj = {};
+                obj[key] = count;
+                if (data.success) {
+                    props.dispatch(updateCartCount(_.merge(props.cart, obj)));
+
+                    console.log(_.merge(props.cart, obj));
+                }
+            })
+            .catch((error) => {
+            });
+    }
     window.addEventListener('resize', () => {
         // We execute the same script as before
         let vh = window.innerHeight * 0.01;
@@ -349,7 +105,7 @@ export default function CartSummary(props) {
                                 <CardContent className='pt-1 cart-items w-100'>
                                     {choosenItems.map(item =>
 
-                                        <CartItem item={item} className='cart-item'></CartItem>
+                                        <CartItem item={item} className='cart-item' handleCart={count => updateCart(item, count)}></CartItem>
 
                                     )}
 
@@ -358,8 +114,9 @@ export default function CartSummary(props) {
                         }
                     </Card>
                     {choosenItems.length !== 0 && <Card className={`${classes.summary} cart-secondary my-2`}>
+
                         <CardHeader
-                            title='Subtotal'
+                            title='To Pay'
                             className='pl-3 summarycard-subtotal-title'
                             subheader={
                                 <div className='d-flex summary-subheading '>
@@ -370,7 +127,7 @@ export default function CartSummary(props) {
                             }
                             action={
                                 <Typography variant="h6" className='bhooky-bold subtotal pt-3 pr-2'>
-                                    {_.sum(_.map(choosenItems, 'amount'))}
+                                    {priceObj.total + (priceObj.total * priceObj.tax / 100)}
                                 </Typography>
                             }
                         />
@@ -383,3 +140,10 @@ export default function CartSummary(props) {
         </React.Fragment>
     );
 }
+
+function mapStateToProps(state) {
+    return {
+        cart: state.cart
+    };
+}
+export default connect(mapStateToProps)(CartSummary);

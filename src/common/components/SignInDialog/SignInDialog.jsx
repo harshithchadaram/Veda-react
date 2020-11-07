@@ -16,6 +16,7 @@ import GoogleButton from '../GoogleButton';
 import { CloseButton } from 'react-bootstrap';
 import './SignInDialog.scss';
 import * as _ from 'lodash';
+import MuiPhoneNumber from "material-ui-phone-number";
 const useStyles = makeStyles((theme) => ({
     paper: {
 
@@ -38,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 function SignInDialog(props) {
     const classes = useStyles();
     const initialFValues = {
-        email: "",
+        mobile: "",
         password: ""
     };
     const { globalState, globalDispatch } = useContext(AppContext);
@@ -48,6 +49,7 @@ function SignInDialog(props) {
         values,
         setValues,
         handleInputChange,
+        resetForm
     } = useForm(initialFValues, true);
 
     const loginUser = (event) => {
@@ -61,7 +63,7 @@ function SignInDialog(props) {
                     <DialogTitle id="form-dialog-title">
                         <Typography variant='h5' className='bhooky-bold'>Sign In</Typography>
                     </DialogTitle>
-                    <CloseButton onClick={props.onClose} className='mr-4 mb-2'></CloseButton>
+                    <CloseButton onClick={event => { props.onClose(); resetForm(); }} className='mr-4 mb-2'></CloseButton>
                 </div>
                 <DialogContent>
                     {/* <DialogContentText>
@@ -70,19 +72,21 @@ function SignInDialog(props) {
           </DialogContentText> */}
                     <div className={classes.paper}>
                         <form className={classes.form} onSubmit={loginUser} noValidate>
-                            <TextField
+                            <MuiPhoneNumber
+                                defaultCountry='us'
+                                onlyCountries={['in', 'us']}
                                 variant="outlined"
                                 margin="normal"
                                 required
                                 fullWidth
-                                type="text"
-                                id="email"
-                                value={values.email}
-                                label="Email"
-                                name="email"
-                                autoComplete="email"
-                                onChange={handleInputChange}
-                                autoFocus
+                                id="mobile"
+                                value={values.mobile}
+                                placeholder='Phone Number'
+                                label="Mobile"
+                                name="mobile"
+                                autoComplete="mobile"
+                                countryCodeEditable={false}
+                                onChange={event => handleInputChange({ target: { name: 'mobile', value: event } })}
                             />
                             <TextField
                                 variant="outlined"
@@ -110,23 +114,23 @@ function SignInDialog(props) {
                         className={classes.submit}
                     >
                         Sign In</Button>
-                    <div className='d-flex justify-content-between w-100 option-btns'>
+                    <div className='d-flex justify-content-between w-100 mb-3 option-btns'>
                         <Link href="#" variant="body2" >
                             Forgot password?
                         </Link>
 
-                        <Link href="#" variant="body2" onClick={props.onSignup}>
+                        <Link href="#" variant="body2" onClick={event => { props.onSignup(); resetForm(); }}>
                             Don't have an account? Sign Up
                         </Link>
                     </div>
-                    <div class="or-div my-2">
+                    {/* <div class="or-div mb-2">
                         <hr class="or-hr" />
                         <span class="or-span">or</span>
-                    </div>
-                    <div className='d-flex mb-4 justify-content-between w-100'>
+                    </div> */}
+                    {/* <div className='d-flex mb-4 justify-content-between w-100'>
                         <GoogleButton className='w-100' btnText='Sign In' handleLogin={props.onSuccessfulLogin} />
                         <FacebookButton />
-                    </div>
+                    </div> */}
                 </DialogActions>
             </Dialog>
         </div>

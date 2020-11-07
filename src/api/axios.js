@@ -4,7 +4,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const instance = axios.create({
-    baseURL: 'https://api.vuacifoodapp.com/',
+    baseURL: 'https://staging.vuacifoodapp.com/',
     headers: { 'auth-type': 'user' }
 });
 

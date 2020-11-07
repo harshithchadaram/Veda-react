@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function RestaurantItemCard(props) {
     const classes = useStyles();
-    const { name, price, image, quantity } = props.itemInfo
+    const { name, price, image, cartCount } = props.itemInfo;
     const [itemCount, setItemCount] = React.useState(0);
     return (
         <Card className={`restaurant-card ${classes.root}`}>
@@ -68,7 +68,7 @@ export default function RestaurantItemCard(props) {
                 <Typography variant="body2" component="p" className='item-price bhooky-regular'>
                     {price}
                 </Typography>
-                <AddorRemoveButtons size='extraSmall' count={itemCount} handleCart={props.handleCart} />
+                <AddorRemoveButtons size='extraSmall' cartCount={cartCount} handleCart={props.handleCart} />
             </CardActions>
         </Card>
     );

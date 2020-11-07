@@ -23,7 +23,9 @@ import { Link } from "react-router-dom";
 import Geocode from "react-geocode";
 import Skeleton from '@material-ui/lab/Skeleton';
 import AppContext from '../../common/components/store/AuthContext';
-
+import Axios from 'axios';
+import { connect } from 'react-redux';
+import { updateCartCount } from "../../common/components/redux/actions";
 function TransitionUp(props) {
     return <Slide {...props} direction="up" />;
 }
@@ -94,7 +96,7 @@ const useStyles = makeStyles((theme) => ({
 function useQuery() {
     return new URLSearchParams(useLocation().search);
 }
-export default function RestaurantCheckout(props) {
+function RestaurantCheckout(props) {
     let query = useQuery();
     const classes = useStyles();
     const history = useHistory();
@@ -106,22 +108,27 @@ export default function RestaurantCheckout(props) {
     const [merchant, setMerchant] = React.useState({});
     const { globalState } = useContext(AppContext);
 
-    const updateCart = (currProduct) => {
+    const updateCart = (currProduct, count) => {
         const cartObj = {
             user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
             deviceId: store.getState().uuid,
             merchant: currProduct.merchant._id,
             product: currProduct._id,
-            quantity: 1,
+            quantity: count,
             productName: currProduct.name,
             productPrice: currProduct.price
         }
         axios
-            .post('user/cart', { item: cartObj })
+            .post('user/cart', cartObj)
             .then(res => {
                 const data = res.data;
+                const key = currProduct._id;
+                const obj = {};
+                obj[key] = count;
                 if (data.success) {
-                    console.log(data);
+                    props.dispatch(updateCartCount(_.merge(props.cart, obj)));
+
+                    console.log(props);
                 }
             })
             .catch((error) => {
@@ -141,15 +148,30 @@ export default function RestaurantCheckout(props) {
                 },
                 type: 'user',
             }
-            axios
-                .post('product/data', { merchant: props.match.params.id })
-                .then(res => {
-                    const data = res.data;
+            const cartObj = {
+                user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
+                deviceId: store.getState().uuid,
+            }
+            Axios.all([axios
+                .post('product/data', { merchant: props.match.params.id }), axios
+                    .post('user/getcartitems', cartObj)])
+                .then(Axios.spread((res1, res2) => {
+                    const data = res1.data;
+                    const cartData = res2.data;
                     if (data.success) {
-                        setProducts(data.products);
-                        console.log(data);
+                        if (cartData.success) {
+                            _.forEach(cartData.cartItems, productObj => {
+                                const cartProdct = _.find(data.products, { '_id': productObj.product });
+                                if (cartProdct) {
+                                    cartProdct.cartCount = productObj.quantity;
+                                }
+                            });
+                            setProducts(data.products);
+                        }
                     }
-                })
+
+
+                }))
                 .catch((error) => {
                 });
             axios
@@ -179,8 +201,6 @@ export default function RestaurantCheckout(props) {
     };
 
     const [itemCount, setItemCount] = React.useState(0);
-
-    console.log(data, loading, error);
     return (
         <React.Fragment>
             <div className={classes.banner}>
@@ -241,9 +261,7 @@ export default function RestaurantCheckout(props) {
             <Container component='section' className='restaurant-checkout-main'>
                 <section className='cards'>
                     {products.map((product, i) =>
-                        <RestaurantItemCard itemInfo={product} handleTitleClick={count => { onTitleClick(product); }} handleCart={e => {
-                            updateCart(product)
-                        }} />
+                        <RestaurantItemCard itemInfo={product} handleTitleClick={count => { onTitleClick(product); }} handleCart={count => updateCart(product, count)} />
                     )}
                 </section>
             </Container>
@@ -278,7 +296,7 @@ export default function RestaurantCheckout(props) {
                         {product.description}
                     </DialogContentText>
                     <div className='d-flex dialog-addtocart justify-content-end'>
-                        <AddorRemoveButtons size='extraSmall' className='dialog-add' count={product.quantity} />
+                        <AddorRemoveButtons size='extraSmall' className='dialog-add' product={product} />
                         <Typography variant="body2" component="p" className='text-light bhooky-semibold pl-3 pr-2 text-center my-auto dialog-item-price'>
                             {product.price}
                         </Typography>
@@ -299,3 +317,10 @@ export default function RestaurantCheckout(props) {
         </React.Fragment>
     );
 }
+
+function mapStateToProps(state) {
+    return {
+        cart: state.cart
+    };
+}
+export default connect(mapStateToProps)(RestaurantCheckout);

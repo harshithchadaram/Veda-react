@@ -14,6 +14,7 @@ import { useForm } from '../../common/components/Form/useForm';
 import GoogleBtn from '../../common/components/GoogleButton';
 import FacebookButton from '../../common/components/FacebookButton';
 import { useGoogleLogin } from 'react-google-login'
+import MuiPhoneNumber from "material-ui-phone-number";
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -82,19 +83,21 @@ export default function SignIn(props) {
               Merchant Sign in
         </Typography> */}
             <form className={classes.form} onSubmit={loginUser} noValidate>
-              <TextField
+              <MuiPhoneNumber
+                defaultCountry='us'
+                onlyCountries={['in', 'us']}
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
-                type="number"
                 id="mobile"
                 value={values.mobile}
+                placeholder='Phone Number'
                 label="Mobile"
                 name="mobile"
                 autoComplete="mobile"
-                onChange={handleInputChange}
-                autoFocus
+                countryCodeEditable={false}
+                onChange={event => handleInputChange({ target: { name: 'mobile', value: event } })}
               />
               <TextField
                 variant="outlined"
@@ -131,10 +134,10 @@ export default function SignIn(props) {
                   </Link>
                 </Grid>
               </Grid>
-              <div className='d-flex mt-4 justify-content-between'>
+              {/* <div className='d-flex mt-4 justify-content-between'>
                 <GoogleBtn className='w-100' handleLogin={onSuccessfulGoogleLogin} />
-                {/* <FacebookButton /> */}
-              </div>
+                <FacebookButton />
+              </div> */}
 
             </form>
           </div>

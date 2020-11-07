@@ -127,6 +127,7 @@ function Header(props) {
   const [showSignUpDialog, setShowSignUpDialog] = React.useState(false);
   const [notiAnchorEl, setNotiAnchorEl] = React.useState(null);
   const [location, setLocation] = React.useState('');
+  const [cart, setCart] = React.useState(0);
   const [pathname, setPathname] = React.useState(window.location.pathname);
   const dispatch = useDispatch();
   const open = Boolean(anchorEl);
@@ -137,7 +138,7 @@ function Header(props) {
 
   store.subscribe(() => {
     setLocation(store.getState()['userLocation'][0].formatted_address);
-
+    setCart(_.sum(_.values(store.getState()['cart'])));
     // history.push('/restaurants');
   })
   const toggleSignInDialog = () => {
@@ -325,7 +326,7 @@ function Header(props) {
             </Nav.Link>
         </Nav> */}
           {isResponsive ?
-            <Badge color="primary" variant="dot" invisible={false} className={classes.sideBarIcon}>
+            <Badge color="primary" variant="dot" invisible={cart === 0} className={classes.sideBarIcon}>
               <MenuIcon
 
                 onClick={() => { setDrawer(true) }} />
@@ -380,7 +381,7 @@ function Header(props) {
                 }
                 <Nav.Link as={Link} to="/cart-summary" href='#cart'>
                   Cart
-                <StyledBadge badgeContent={4} color="secondary">
+                <StyledBadge badgeContent={cart} color="secondary">
                     <ShoppingCartIcon />
                   </StyledBadge>
                 </Nav.Link>
@@ -449,7 +450,7 @@ function Header(props) {
 
             <Nav.Link as={Link} to="/cart-summary" href='#cartsummary'>
               Cart
-                <StyledBadge badgeContent={4} color="secondary">
+                <StyledBadge badgeContent={cart} color="secondary">
                 <ShoppingCartIcon />
               </StyledBadge>
             </Nav.Link>

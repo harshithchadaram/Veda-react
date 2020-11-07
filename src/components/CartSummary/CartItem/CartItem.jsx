@@ -21,7 +21,7 @@ export default function CartItem(props) {
                     <Typography variant="body2" className={`${classes.itemName} item-name`}>
                         {item.productName}
                     </Typography>
-                    <AddorRemoveButtons count={item.quantity} />
+                    <AddorRemoveButtons cartCount={item.quantity} handleCart={props.handleCart} />
                     <Typography variant="body2" className='item-price text-right bhooky-semibold'>
                         {item.productPrice}
                     </Typography>

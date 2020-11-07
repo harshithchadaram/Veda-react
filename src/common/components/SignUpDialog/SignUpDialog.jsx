@@ -52,6 +52,9 @@ function SignUpDialog(props) {
         lastName: "",
         mobile: ""
     };
+    store.subscribe(() => {
+        setLocationObj(store.getState()['userLocation'][0].formatted_address);
+    });
     const [showBackdrop, setShowBackdrop] = React.useState(false);
     const [locationObj, setLocationObj] = React.useState({ results: [] });
     const [isFormSignUp, setIsFormSignUp] = React.useState(true);
@@ -195,7 +198,7 @@ function SignUpDialog(props) {
                                 name="location"
                                 type="location"
                                 id="location"
-                                value={locationObj?.results[0] ? locationObj?.results[0]?.formatted_address : ""}
+                                value={locationObj?.results ? locationObj?.results[0]?.formatted_address : ""}
                                 disabled={true}
                                 autoComplete="location"
                                 inputRef={input => input && input.focus()}
@@ -221,18 +224,18 @@ function SignUpDialog(props) {
                     >
                         Sign Up</Button>
                     <div className='d-flex justify-content-between w-100 option-btns'>
-                        <Link href="#" variant="body2" onClick={props.onSignin}>
+                        <Link href="#" variant="body2" onClick={event => { props.onSignin(); resetForm(); }}>
                             Already have an account? Sign In
                         </Link>
                     </div>
-                    {isFormSignUp && <div class="or-div my-2">
+                    {/* {isFormSignUp && <div class="or-div my-2">
                         <hr class="or-hr" />
                         <span class="or-span">or</span>
                     </div>}
                     {isFormSignUp && <div className='d-flex justify-content-between w-100'>
                         <GoogleButton className='w-100' btnText='Sign Up' handleLogin={signUp} />
-                        {/* <FacebookButton /> */}
-                    </div>}
+                        <FacebookButton />
+                    </div>} */}
                 </DialogActions>
             </Dialog>
 
