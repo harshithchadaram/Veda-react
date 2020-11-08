@@ -70,7 +70,6 @@ function BecomeaPartner() {
     email: "",
     businessNumber: "",
     website: "",
-    licenseNumber: "",
     yourName: "",
     yourNumber: ""
   };
@@ -90,7 +89,6 @@ function BecomeaPartner() {
             mobile: values.businessNumber,
             websiteLink: values.website,
             status: "pending",
-            licenceNumber: values.licenseNumber,
             contactPersonName: values.yourName,
             contactPersonMobile: values.yourNumber,
             location: {
@@ -260,7 +258,7 @@ function BecomeaPartner() {
                 name="website"
                 onChange={handleInputChange}
               />
-              <TextField
+              {/* <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
@@ -270,7 +268,7 @@ function BecomeaPartner() {
                 label="License Number"
                 name="licenseNumber"
                 onChange={handleInputChange}
-              />
+              /> */}
               <Typography component="h6" className='align-self-start mt-1' variant="h6">
                 Your Information
             </Typography>
