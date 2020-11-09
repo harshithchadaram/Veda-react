@@ -29,11 +29,7 @@ import { updateCartCount } from "../../common/components/redux/actions";
 function TransitionUp(props) {
     return <Slide {...props} direction="up" />;
 }
-const action = (
-    <Button color="primary" variant='contained' size="small">
-        Cart
-    </Button>
-);
+
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -105,13 +101,14 @@ function RestaurantCheckout(props) {
     const [location, setLocation] = React.useState({});
     const [products, setProducts] = React.useState([]);
     const [product, setProduct] = React.useState({});
+    const [isShowSb, setIsShowSb] = React.useState(false);
     const [merchant, setMerchant] = React.useState({});
     const { globalState } = useContext(AppContext);
 
     const updateCart = (currProduct, count) => {
         const cartObj = {
-            user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
-            deviceId: store.getState().uuid,
+            user: globalState.isLoggedIn ? JSON.parse(window.localStorage.profileObj)._id : null,
+            deviceId: globalState.isLoggedIn ? null : store.getState().uuid,
             merchant: currProduct.merchant._id,
             product: currProduct._id,
             quantity: count,
@@ -140,6 +137,7 @@ function RestaurantCheckout(props) {
         }
         store.subscribe(() => {
             setLocation(store.getState()['userLocation'][0]);
+            setIsShowSb(_.sum(_.values(store.getState()['cart'])) > 0);
         });
         if (!_.isEmpty(location)) {
             const productObj = {
@@ -149,8 +147,8 @@ function RestaurantCheckout(props) {
                 type: 'user',
             }
             const cartObj = {
-                user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
-                deviceId: store.getState().uuid,
+                user: globalState.isLoggedIn ? JSON.parse(window.localStorage.profileObj)._id : null,
+                deviceId: globalState.isLoggedIn ? null : store.getState().uuid,
             }
             Axios.all([axios
                 .post('product/data', { merchant: props.match.params.id }), axios
@@ -161,9 +159,13 @@ function RestaurantCheckout(props) {
                     if (data.success) {
                         if (cartData.success) {
                             _.forEach(cartData.cartItems, productObj => {
-                                const cartProdct = _.find(data.products, { '_id': productObj.product });
+                                const cartProdct = _.find(data.products, { '_id': productObj.product._id });
                                 if (cartProdct) {
                                     cartProdct.cartCount = productObj.quantity;
+                                    const key = productObj.product._id;
+                                    const obj = {};
+                                    obj[key] = productObj.quantity;
+                                    props.dispatch(updateCartCount(_.merge(props.cart, obj)));
                                 }
                             });
                             setProducts(data.products);
@@ -306,13 +308,17 @@ function RestaurantCheckout(props) {
             </Dialog>
 
             <Snackbar
-                open={true}
+                open={isShowSb}
                 color='black'
                 className='mb-5'
                 onClose={handleClose}
                 TransitionComponent={TransitionUp}
             >
-                <SnackbarContent message="Your items are waiting..." action={action} />
+                <SnackbarContent message="Your items are waiting..." action={
+                    <Button color="primary" variant='contained' size="small" onClick={(e) => history.push('/cart-summary')}>
+                        Cart
+        </Button>
+                } />
             </Snackbar>
         </React.Fragment>
     );

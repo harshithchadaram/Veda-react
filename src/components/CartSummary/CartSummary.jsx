@@ -30,8 +30,8 @@ function CartSummary(props) {
     }
     useEffect(() => {
         const cartObj = {
-            user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
-            deviceId: store.getState().uuid,
+            user: globalState.isLoggedIn ? JSON.parse(window.localStorage.profileObj)._id : null,
+            deviceId: globalState.isLoggedIn ? null : store.getState().uuid,
         }
         axios
             .post('user/getcartitems', cartObj)
@@ -40,7 +40,12 @@ function CartSummary(props) {
                 if (data.success) {
                     setChoosenItems(data.cartItems);
                     setPriceObj({ tax: data.taxPercent, total: data.totalPrice });
-                    console.log(data);
+                    _.forEach(data.cartItems, productObj => {
+                        const key = productObj.product._id;
+                        const obj = {};
+                        obj[key] = productObj.quantity;
+                        props.dispatch(updateCartCount(_.merge(props.cart, obj)));
+                    });
                 }
             })
             .catch((error) => {
@@ -48,10 +53,10 @@ function CartSummary(props) {
     }, []);
     const updateCart = (currProduct, count) => {
         const cartObj = {
-            user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
-            deviceId: store.getState().uuid,
+            user: globalState.isLoggedIn ? JSON.parse(window.localStorage.profileObj)._id : null,
+            deviceId: globalState.isLoggedIn ? null : store.getState().uuid,
             merchant: currProduct.merchant._id,
-            product: currProduct.product,
+            product: currProduct.product._id,
             quantity: count,
             productName: currProduct.name,
             productPrice: currProduct.price
@@ -60,7 +65,7 @@ function CartSummary(props) {
             .post('user/cart', cartObj)
             .then(res => {
                 const data = res.data;
-                const key = currProduct.product;
+                const key = currProduct.product._id;
                 const obj = {};
                 obj[key] = count;
                 if (data.success) {

@@ -151,24 +151,14 @@ function Header(props) {
   }
 
   const onSuccessfulLogin = (response) => {
-    debugger;
-    axios
-      .post(`/auth/login/`,)
-      .then(res => {
-        const data = res.data;
-        if (data.success) {
-
-        }
-      })
-      .catch((error) => {
-      })
-
     window.localStorage.setItem('accessToken', response.accessToken);
-    window.localStorage.setItem('profileObj', JSON.stringify(response.profileObj));
+    window.localStorage.setItem('profileObj', JSON.stringify(response));
+
     globalDispatch({ type: "LOGIN" });
-    setShowSignInDialog(false);
-    setShowSignUpDialog(false)
+
     history.push('/restaurants');
+    setShowSignInDialog(false);
+    setShowSignUpDialog(false);
   }
   const onSuccessfulSignup = (response, formValues, locationDetails, isFormSignup) => {
     debugger;
@@ -463,7 +453,7 @@ function Header(props) {
       </SwipeableDrawer>
       <SignInDialog show={showSignInDialog}
         onClose={toggleSignInDialog}
-        onSuccessfulLogin={onSuccessfulLogin}
+        onLoginSuccess={onSuccessfulLogin}
         onSignup={handleSignUp}>
       </SignInDialog>
       <SignUpDialog show={showSignUpDialog}
@@ -476,7 +466,8 @@ function Header(props) {
 }
 const mapStateToProps = (state) => {
   return {
-    location: state.location
+    location: state.location,
+    cart: state.cart
   };
 }
 export default connect(mapStateToProps)(Header);

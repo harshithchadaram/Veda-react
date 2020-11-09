@@ -6,7 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Collapse, makeStyles, Typography } from '@material-ui/core';
 import AppContext from '../store/AuthContext';
 import { useHistory, Link } from 'react-router-dom';
 import { useForm } from '../Form/useForm';
@@ -17,6 +17,9 @@ import { CloseButton } from 'react-bootstrap';
 import './SignInDialog.scss';
 import * as _ from 'lodash';
 import MuiPhoneNumber from "material-ui-phone-number";
+import axios from '../../../api/axios';
+import Alert from '@material-ui/lab/Alert';
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     display: "flex",
@@ -43,7 +46,8 @@ function SignInDialog(props) {
   };
   const { globalState, globalDispatch } = useContext(AppContext);
   const history = useHistory();
-
+  const [open, setOpen] = React.useState(false);
+  const [alertInfo, setAlertInfo] = React.useState({});
   const {
     values,
     setValues,
@@ -51,8 +55,42 @@ function SignInDialog(props) {
     resetForm
   } = useForm(initialFValues, true);
 
+  const login = () => {
+    const numArr = values.mobile.split(" ");
+    numArr.shift();
+    const loginObj = {
+      mobile: _.join(numArr, "").replace(/[^A-Z0-9]/ig, ""),
+      password: values.password
+    }
+    axios.defaults.headers.post['login-type'] = 'custom'
+    axios
+      .post(`/auth/login/`, loginObj)
+      .then(res => {
+        const data = res.data;
+        console.log(data);
+        if (data.success) {
+          props.onLoginSuccess(data);
+        } else {
+          setOpen(true);
+          setAlertInfo({ severity: "error", msg: data.message });
+        }
+        setTimeout(() => {
+          setOpen(false);
+        }, 2000);
+      })
+      .catch((res) => {
+        if (res.response) {
+          const data = res.response.data;
+          console.log(res);
+          setOpen(true);
+          setAlertInfo({ severity: "error", msg: data.message });
+          setTimeout(() => {
+            setOpen(false);
+          }, 2000);
+        }
+      })
 
-  const loginUser = (event) => { };
+  }
 
   return (
     <div>
@@ -63,19 +101,24 @@ function SignInDialog(props) {
           </DialogTitle>
           <CloseButton onClick={event => { props.onClose(); resetForm(); }} className='mr-4 mb-2'></CloseButton>
         </div>
+
         <DialogContent>
+          <Collapse in={open} >
+            <Alert severity={alertInfo.severity}>{alertInfo.msg}</Alert>
+          </Collapse>
           {/* <DialogContentText>
                         To subscribe to this website, please enter your email address here. We will send updates
                         occasionally.
           </DialogContentText> */}
           <div className={classes.paper}>
-            <form className={classes.form} onSubmit={loginUser} noValidate>
+            <form className={classes.form} noValidate>
               <MuiPhoneNumber
                 defaultCountry='us'
                 onlyCountries={['in', 'us']}
                 variant="outlined"
                 margin="normal"
                 required
+
                 fullWidth
                 id="mobile"
                 value={values.mobile}
@@ -104,12 +147,12 @@ function SignInDialog(props) {
         </DialogContent>
         <DialogActions className='flex-column mx-3 pt-0 my-auto'>
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             disabled={_.values(values).some(v => v === "")}
             className={classes.submit}
+            onClick={login}
           >
             Sign In</Button>
           <div className='d-flex justify-content-between w-100 mb-3 option-btns'>

@@ -202,8 +202,8 @@ function BhookyUserHome(props) {
 
   const updateCart = (count) => {
     const cartObj = {
-      user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
-      deviceId: store.getState().uuid,
+      user: globalState.isLoggedIn ? JSON.parse(window.localStorage.profileObj)._id : null,
+      deviceId: globalState.isLoggedIn ? null : store.getState().uuid,
       merchant: product.merchant._id,
       product: product._id,
       quantity: count,
@@ -220,7 +220,7 @@ function BhookyUserHome(props) {
         if (data.success) {
           let currPrducts = products;
           _.forEach(data.cartItems, productObj => {
-            const cartProdct = _.find(currPrducts, { '_id': productObj.product });
+            const cartProdct = _.find(currPrducts, { '_id': productObj.product._id });
             if (cartProdct) {
               cartProdct.cartCount = productObj.quantity;
             }
@@ -236,8 +236,8 @@ function BhookyUserHome(props) {
 
   const setProductsFromApi = (productObj) => {
     const cartObj = {
-      user: globalState.isLoggedIn ? window.localStorage.getItem('profileObj').userId : null,
-      deviceId: store.getState().uuid,
+      user: globalState.isLoggedIn ? JSON.parse(window.localStorage.profileObj)._id : null,
+      deviceId: globalState.isLoggedIn ? null : store.getState().uuid,
     }
     Axios.all([axios
       .post('product/data', productObj),
@@ -248,12 +248,17 @@ function BhookyUserHome(props) {
         if (data.success) {
           if (cartData.success) {
             _.forEach(cartData.cartItems, productObj => {
-              const cartProdct = _.find(data.products, { '_id': productObj.product });
+              const cartProdct = _.find(data.products, { '_id': productObj.product._id });
               if (cartProdct) {
                 cartProdct.cartCount = productObj.quantity;
+                const key = productObj.product._id;
+                const obj = {};
+                obj[key] = productObj.quantity;
+                props.dispatch(updateCartCount(_.merge(props.cart, obj)));
               }
             });
             setProducts(data.products);
+
           }
         }
       }))
